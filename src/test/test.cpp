@@ -2,6 +2,6 @@
 
 int main()
 {
-    Pepcb::ConnectorKicadImporter circuit("res/kicad/ver1.net");
+    Pepcb::ConnectorKicadImporter circuit("res/kicad/ver1.test");
     return 0;
 }

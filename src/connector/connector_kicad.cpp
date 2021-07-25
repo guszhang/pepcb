@@ -1,63 +1,27 @@
 #include <fstream>
 #include <iostream>
 #include <cctype>
+#include <stack>
 #include "connector_kicad.h"
 
 using namespace Pepcb;
+using namespace std;
 
-ConnectorKicadImporter::ConnectorKicadImporter(std::string filename)
+
+
+ConnectorKicadImporter::ConnectorKicadImporter(string filename)
 {
-    std::ifstream netlist_file(filename);
-    std::cout << filename << std::endl;
-    char c = netlist_file.get();
-    int nl = -1;
-    bool ncflag = false;
-    while (netlist_file.good())
+    ifstream netlist_file(filename);
+    cout << filename << endl;
+    string line_buffer;
+    this->_input_file_buffer = "";
+    if (netlist_file.is_open())
     {
-        switch (c)
+        while (getline(netlist_file, line_buffer))
         {
-        case '(':
-            nl++;
-            break;
-        case ')':
-            nl--;
-            if (ncflag)
-            {
-                std::cout << std::endl;
-                for (int i = 0; i < nl; i++)
-                    std::cout << "  ";
-            }
-            ncflag = false;
-            break;
-        case ' ':
-            if (ncflag)
-            {
-                std::cout << std::endl;
-                for (int i = 0; i < nl; i++)
-                    std::cout << "  ";
-            }
-            ncflag = false;
-            break;
-        case '\"':
-            std::cout << c;
-            c = netlist_file.get();
-
-            while (c != '\"')
-            {
-                std::cout << c;
-                c = netlist_file.get();
-            }
-            std::cout << c;
-
-            break;
-        default:
-            if (isprint(c))
-            {
-                std::cout << c;
-                ncflag = true;
-            }
+            this->_input_file_buffer.append(line_buffer);
         }
-        c = netlist_file.get();
     }
+    cout << this->_input_file_buffer << endl;
     netlist_file.close();
 }
