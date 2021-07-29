@@ -23,10 +23,28 @@ ConnectorKicadImporter::ConnectorKicadImporter(std::string filename)
     netlist_file.close();
 }
 
-TPCBElement ConnectorKicadImporter::StringToTree(std::string str, int pos)
+TPCBElement* ConnectorKicadImporter::StringToTree(std::string str, int pos)
 {
-    TPCBElement new_node;
-    while(str[pos]!=')'){
-        
+    TPCBElement* new_node=new TPCBElement;
+    int string_length = str.length();
+    std::string attribute;
+    while(pos<string_length){
+        switch(str[pos]){
+            case ')':
+                new_node->values.insert(std::pair<std::string, TPCBElement*>(attribute, nullptr));
+                return new_node;
+                break;
+            case '(':
+                new_node->values.insert(std::pair<std::string, TPCBElement*>(attribute, StringToTree(str, pos++)));
+                break;
+            case ' ':
+                new_node->values.insert(std::pair<std::string, TPCBElement*>(attribute, nullptr));
+                break;
+            default:
+                attribute+=str[pos];
+                break;
+        }
+        pos++;
     }
+    return new_node;
 }
