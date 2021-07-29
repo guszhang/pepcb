@@ -15,9 +15,12 @@ namespace Pepcb
     {
     public:
         ConnectorKicadImporter(std::string filename);
-        CoreCircuit::CircuitDetails ImportCircuit();
+        CoreCircuit::CircuitDetails ImportCircuit(void);
 
     private:
         std::string _input_file_buffer;
+        TPCBElement _root;
+        TPCBElement StringToTree(std::string, int);
+        
     };
 }

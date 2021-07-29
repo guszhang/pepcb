@@ -5,15 +5,12 @@
 #include "connector_kicad.h"
 
 using namespace Pepcb;
-using namespace std;
 
-
-
-ConnectorKicadImporter::ConnectorKicadImporter(string filename)
+ConnectorKicadImporter::ConnectorKicadImporter(std::string filename)
 {
-    ifstream netlist_file(filename);
-    cout << filename << endl;
-    string line_buffer;
+    std::ifstream netlist_file(filename);
+    std::cout << filename << std::endl;
+    std::string line_buffer;
     this->_input_file_buffer = "";
     if (netlist_file.is_open())
     {
@@ -22,6 +19,14 @@ ConnectorKicadImporter::ConnectorKicadImporter(string filename)
             this->_input_file_buffer.append(line_buffer);
         }
     }
-    cout << this->_input_file_buffer << endl;
+    std::cout << this->_input_file_buffer << std::endl;
     netlist_file.close();
+}
+
+TPCBElement ConnectorKicadImporter::StringToTree(std::string str, int pos)
+{
+    TPCBElement new_node;
+    while(str[pos]!=')'){
+        
+    }
 }
