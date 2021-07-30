@@ -8,7 +8,7 @@ namespace Pepcb
 
     typedef struct TPCBElement
     {
-        std::map<std::string, TPCBElement> values;
+        std::map<std::string, TPCBElement*> values;
     } TPCBElement;
 
     class ConnectorKicadImporter
@@ -20,7 +20,7 @@ namespace Pepcb
     private:
         std::string _input_file_buffer;
         TPCBElement _root;
-        TPCBElement StringToTree(std::string, int);
+        TPCBElement* StringToTree(std::string, int);
         
     };
 }
