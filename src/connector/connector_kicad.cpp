@@ -20,8 +20,7 @@ ConnectorKicadImporter::ConnectorKicadImporter(std::string filename)
         }
     }
     //std::cout << this->_input_file_buffer << std::endl;
-    TPCBElement *root = StringToTree(this->_input_file_buffer, 0);
-    PrintTree(root, 0);
+    this->root = StringToTree(this->_input_file_buffer, 0);
     netlist_file.close();
 }
 
@@ -45,10 +44,12 @@ TPCBElement *ConnectorKicadImporter::StringToTree(std::string str, int pos)
             }
             node_pointer = node_stack.top();
             node_stack.pop();
-            while(str[pos+1]==' ')pos++;
+            while (str[pos + 1] == ' ')
+                pos++;
             break;
         case '(':
-            while(str[pos+1]==' ')pos++;
+            while (str[pos + 1] == ' ')
+                pos++;
             new_node = new TPCBElement;
             attribute = "";
             while (str[++pos] != ' ')
@@ -64,10 +65,12 @@ TPCBElement *ConnectorKicadImporter::StringToTree(std::string str, int pos)
                 node_pointer->values.push_back(std::pair<std::string, TPCBElement *>(attribute, nullptr));
                 attribute = "";
             }
-            while(str[pos+1]==' ')pos++;
+            while (str[pos + 1] == ' ')
+                pos++;
             break;
         case '\"':
-            while(str[++pos]!='\"') attribute+=str[pos];
+            while (str[++pos] != '\"')
+                attribute += str[pos];
             break;
         case '\n':
         case '\r':
@@ -86,15 +89,34 @@ void ConnectorKicadImporter::PrintTree(TPCBElement *node, int level)
     int i;
     std::vector<std::pair<std::string, TPCBElement *>>::iterator it;
     //std::cout << "@Elements=" << node->values.size() << std::endl;
-    for (it = node->values.begin(); it != node->values.end(); ++it)
+    for (it = node->values.begin(); it != node->values.end(); it++)
     {
         for (i = 0; i < level; i++)
             std::cout << "  ";
         std::cout << it->first << std::endl;
         if (it->second != nullptr)
         {
-            PrintTree(it->second, level+1);
+            PrintTree(it->second, level + 1);
         }
     }
     return;
+}
+
+std::vector<TPCBElement *> ConnectorKicadImporter::FetchElement(TPCBElement *node, std::string element)
+{
+    std::vector<TPCBElement *> node_list, child_list;
+    std::vector<std::pair<std::string, TPCBElement *>>::iterator it;
+    for (it = node->values.begin(); it != node->values.end(); it++)
+    {
+        if (it->first == element)
+        {
+            node_list.push_back(it->second);
+        }
+        if (it->second != nullptr)
+        {
+            child_list = FetchElement(it->second, element);
+            node_list.insert(node_list.end(), child_list.begin(), child_list.end());
+        }
+    }
+    return node_list;
 }
