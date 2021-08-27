@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <map>
+#include <unordered_map>
 
 namespace Pepcb
 {
@@ -55,7 +56,8 @@ namespace Pepcb
 
         typedef struct
         {
-            char *name; // for printing
+            std::string name; // for printing
+            std::string value;
             std::vector<TPad> pad_list;
             std::multimap<Base::ELayer, Base::TPolygon> geometry_list;
         } TParts;
@@ -65,7 +67,8 @@ namespace Pepcb
         public:
             std::vector<TConnection> connection_list;
             std::vector<TParts> part_list;
-            std::vector<char *> net_list;
+            std::unordered_map<std::string, int> part_ref;
+            std::vector<std::string> net_list;
         };
 
     }

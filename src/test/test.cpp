@@ -1,6 +1,7 @@
 #include <vector>
 #include <iostream>
 #include "connector_kicad.h"
+#include "core.h"
 
 using namespace Pepcb;
 
@@ -9,11 +10,19 @@ int main()
     ConnectorKicadImporter circuit("res/ver1_pri.net");
     //circuit.PrintTree(circuit.root, 0);
 
-    auto node_list = circuit.FetchElement(circuit.root, "comp");
-    for (auto it = node_list.begin(); it < node_list.end(); it++)
-    {
-        std::cout << "Component " << it-node_list.begin() << " : " << (*it)->values[2].second->values[0].first <<std::endl;
-    }
+    CoreCircuit::CircuitDetails *circuit1 = circuit.ImportCircuit();
+
+    // for (auto it = circuit1->net_list.begin(); it < circuit1->net_list.end(); it++)
+    // {
+    //     std::cout << *it << std::endl;
+    // }
+
+    // for (auto it = circuit1->part_ref.begin(); it != circuit1->part_ref.end(); it++)
+    // {
+    //     std::cout << it->second << ":" << it->first << std::endl;
+    // }
+
+    
 
     return 0;
 }

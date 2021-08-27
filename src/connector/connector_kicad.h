@@ -18,7 +18,7 @@ namespace Pepcb
         TPCBElement* root;
 
         ConnectorKicadImporter(std::string filename);
-        CoreCircuit::CircuitDetails ImportCircuit(void);
+        CoreCircuit::CircuitDetails* ImportCircuit(void);
         void PrintTree(TPCBElement* node, int level);
         std::vector<TPCBElement*> FetchElement(TPCBElement *node, std::string element);
 

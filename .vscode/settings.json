@@ -44,5 +44,5 @@
         "streambuf": "cpp",
         "typeinfo": "cpp"
     },
-    "editor.fontSize": 24
+    "editor.fontSize": 16
 }

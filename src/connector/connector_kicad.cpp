@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cctype>
 #include <stack>
+#include <algorithm>
 #include "connector_kicad.h"
 
 using namespace Pepcb;
@@ -20,8 +21,12 @@ ConnectorKicadImporter::ConnectorKicadImporter(std::string filename)
         }
     }
     //std::cout << this->_input_file_buffer << std::endl;
-    this->root = StringToTree(this->_input_file_buffer, 0);
     netlist_file.close();
+    this->_input_file_buffer.erase(std::remove(this->_input_file_buffer.begin(), this->_input_file_buffer.end(), '\n'), this->_input_file_buffer.end());
+    this->_input_file_buffer.erase(std::remove(this->_input_file_buffer.begin(), this->_input_file_buffer.end(), '\r'), this->_input_file_buffer.end());
+    this->_input_file_buffer.erase(std::remove(this->_input_file_buffer.begin(), this->_input_file_buffer.end(), '\t'), this->_input_file_buffer.end());
+
+    this->root = StringToTree(this->_input_file_buffer, 0);
 }
 
 TPCBElement *ConnectorKicadImporter::StringToTree(std::string str, int pos)
@@ -72,9 +77,6 @@ TPCBElement *ConnectorKicadImporter::StringToTree(std::string str, int pos)
             while (str[++pos] != '\"')
                 attribute += str[pos];
             break;
-        case '\n':
-        case '\r':
-            break;
         default:
             attribute += str[pos];
             break;
@@ -119,4 +121,92 @@ std::vector<TPCBElement *> ConnectorKicadImporter::FetchElement(TPCBElement *nod
         }
     }
     return node_list;
+}
+
+CoreCircuit::CircuitDetails *ConnectorKicadImporter::ImportCircuit(void)
+{
+    CoreCircuit::CircuitDetails *circuit_details = new CoreCircuit::CircuitDetails;
+
+    auto libpart_list = FetchElement(this->root, "libpart");
+    std::unordered_map<std::string, std::map<int, std::string>> libpart_map;
+    for (auto it = libpart_list.begin(); it < libpart_list.end(); it++)
+    {
+        std::string lib_part_tuple = (*it)->values[0].second->values[0].first + ":" + (*it)->values[1].second->values[0].first;
+        std::map<int, std::string> lib_part_pin_map = {};
+        for (auto it_attr = (*it)->values.begin(); it_attr < (*it)->values.end(); it_attr++)
+        {
+            if (it_attr->first == "pins")
+            {
+                for (auto it_pin = it_attr->second->values.begin(); it_pin < it_attr->second->values.end(); it_pin++)
+                {
+                    // std::cout << it_pin->second->values[0].first << std::endl;
+                    lib_part_pin_map.insert(std::pair<int, std::string>(std::stoi(it_pin->second->values[0].second->values[0].first), it_pin->second->values[1].second->values[0].first));
+                }
+                break;
+            }
+        }
+        libpart_map.insert(std::pair<std::string, std::map<int, std::string>>(lib_part_tuple, lib_part_pin_map));
+    }
+
+    // for (auto it = libpart_map.begin(); it != libpart_map.end(); it++)
+    // {
+    //     std::cout << "Part_model: " << it->first << std::endl;
+    //     for (auto it_pin = it->second.begin(); it_pin != it->second.end(); it_pin++)
+    //     {
+    //         std::cout << "  Pin: " << it_pin->first << " Pad: " << it_pin->second << std::endl;
+    //     }
+    // }
+
+    std::unordered_map<std::string, std::map<int, int>> pin_to_pad_map;
+    auto part_list = FetchElement(this->root, "comp");
+    for (auto it = part_list.begin(); it < part_list.end(); it++)
+    {
+        std::string lib_part_tuple;
+        for (auto it_attr = (*it)->values.begin(); it_attr < (*it)->values.end(); it_attr++)
+        {
+            if (it_attr->first == "libsource")
+            {
+                lib_part_tuple = it_attr->second->values[0].second->values[0].first + ":" + it_attr->second->values[1].second->values[0].first;
+                break;
+            }
+        }
+
+        CoreCircuit::TParts part = {
+            .name = (*it)->values[0].second->values[0].first,
+            .value = (*it)->values[1].second->values[0].first,
+        };
+        auto pin_map = libpart_map[lib_part_tuple];
+        std::map<int, int> part_pin_to_pad_map;
+        int pin_index = 0;
+        for (auto it_pin = pin_map.begin(); it_pin != pin_map.end(); it_pin++)
+        {
+            part_pin_to_pad_map.insert(std::pair<int, int>(it_pin->first, pin_index));
+            pin_index++;
+            // part.pad_list.push_back(CoreCircuit::TPad(
+
+            // ))
+        }
+        circuit_details->part_list.push_back(part);
+        circuit_details->part_ref.insert(std::pair<std::string, int>(part.name, it - part_list.begin()));
+        pin_to_pad_map.insert(std::pair<std::string, std::map<int, int>>(part.name, part_pin_to_pad_map));
+    }
+
+    for (auto it = pin_to_pad_map.begin(); it != pin_to_pad_map.end(); it++)
+    {
+        std::cout << "Part_ref: " << it->first << std::endl;
+        for (auto it_pin = it->second.begin(); it_pin != it->second.end(); it_pin++)
+        {
+            std::cout << "  Pin: " << it_pin->first << " Pad: " << it_pin->second << std::endl;
+        }
+    }
+
+    auto net_list = FetchElement(this->root, "net");
+    for (auto it = net_list.begin(); it < net_list.end(); it++)
+    {
+        circuit_details->net_list.push_back((*it)->values[1].second->values[0].first);
+        // for (auto it_node=(*it)->values.begin()+2;it_node<(*it)->values.end();it_node++){
+
+        // }
+    }
+    return circuit_details;
 }
