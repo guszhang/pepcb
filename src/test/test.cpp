@@ -2,6 +2,6 @@
 
 int main()
 {
-    Pepcb::ConnectorKicadImporter circuit("res/kicad/ver1.test");
+    Pepcb::ConnectorKicadImporter circuit("res/M3_Mounting_Hole.kicad_mod");
     return 0;
 }

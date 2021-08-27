@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <vector>
 #include "core.h"
 
 namespace Pepcb
@@ -8,7 +9,7 @@ namespace Pepcb
 
     typedef struct TPCBElement
     {
-        std::map<std::string, TPCBElement*> values;
+        std::vector<std::pair<std::string, TPCBElement *>> values;
     } TPCBElement;
 
     class ConnectorKicadImporter
@@ -21,6 +22,7 @@ namespace Pepcb
         std::string _input_file_buffer;
         TPCBElement _root;
         TPCBElement* StringToTree(std::string, int);
+        void PrintTree(TPCBElement* node, int level);
         
     };
 }
