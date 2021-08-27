@@ -6,11 +6,11 @@
 
 namespace Pepcb
 {
-
-    typedef struct TPCBElement
+    class TPCBElement
     {
+    public:
         std::vector<std::pair<std::string, TPCBElement *>> values;
-    } TPCBElement;
+    };
 
     class ConnectorKicadImporter
     {
@@ -23,6 +23,5 @@ namespace Pepcb
         TPCBElement _root;
         TPCBElement* StringToTree(std::string, int);
         void PrintTree(TPCBElement* node, int level);
-        
     };
 }

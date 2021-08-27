@@ -66,6 +66,9 @@ TPCBElement *ConnectorKicadImporter::StringToTree(std::string str, int pos)
             }
             while(str[pos+1]==' ')pos++;
             break;
+        case '\"':
+            while(str[++pos]!='\"') attribute+=str[pos];
+            break;
         case '\n':
         case '\r':
             break;
