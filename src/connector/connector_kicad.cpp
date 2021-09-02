@@ -199,14 +199,22 @@ CoreCircuit::CircuitDetails *ConnectorKicadImporter::ImportCircuit(void)
             std::cout << "  Pin: " << it_pin->first << " Pad: " << it_pin->second << std::endl;
         }
     }
-
+    std::vector<std::pair<int, int>> node_list;
     auto net_list = FetchElement(this->root, "net");
     for (auto it = net_list.begin(); it < net_list.end(); it++)
     {
+        node_list.clear();
         circuit_details->net_list.push_back((*it)->values[1].second->values[0].first);
-        // for (auto it_node=(*it)->values.begin()+2;it_node<(*it)->values.end();it_node++){
-
-        // }
+        for (auto it_node = (*it)->values.begin() + 2; it_node < (*it)->values.end(); it_node++)
+        {
+            std::string part_ref = it_node->second->values[0].second->values[0].first;
+            int pin_ref = stoi(it_node->second->values[1].second->values[0].first);
+            //std::cout << part_ref << " " << pin_ref << std::endl;
+            auto pin_ref_map = pin_to_pad_map[part_ref];
+            node_list.push_back(std::pair<int, int>(circuit_details->part_ref[part_ref], pin_ref_map[pin_ref]));
+            std::cout << circuit_details->part_ref[part_ref] << " " << pin_ref_map[pin_ref] << std::endl;
+        }
+        std::cout << std::endl;
     }
     return circuit_details;
 }
