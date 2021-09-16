@@ -131,7 +131,13 @@ CoreCircuit::CircuitDetails *ConnectorKicadImporter::ImportCircuit(void)
     std::unordered_map<std::string, std::map<int, std::string>> libpart_map;
     for (auto it = libpart_list.begin(); it < libpart_list.end(); it++)
     {
-        std::string lib_part_tuple = (*it)->values[0].second->values[0].first + ":" + (*it)->values[1].second->values[0].first;
+        std::vector<std::string> lib_part_tuples = {};
+        lib_part_tuples.push_back((*it)->values[0].second->values[0].first + ":" + (*it)->values[1].second->values[0].first);
+        auto libpart_alias_list = FetchElement(*it, "alias");
+        for (auto it_alias = libpart_alias_list.begin(); it_alias < libpart_alias_list.end(); it_alias++)
+        {
+            lib_part_tuples.push_back((*it)->values[0].second->values[0].first + ":" + (*it_alias)->values[0].first);
+        }
         std::map<int, std::string> lib_part_pin_map = {};
         for (auto it_attr = (*it)->values.begin(); it_attr < (*it)->values.end(); it_attr++)
         {
@@ -145,7 +151,11 @@ CoreCircuit::CircuitDetails *ConnectorKicadImporter::ImportCircuit(void)
                 break;
             }
         }
-        libpart_map.insert(std::pair<std::string, std::map<int, std::string>>(lib_part_tuple, lib_part_pin_map));
+        for (auto it_libpart_tuple = lib_part_tuples.begin(); it_libpart_tuple < lib_part_tuples.end(); it_libpart_tuple++)
+        {
+            libpart_map.insert(std::pair<std::string, std::map<int, std::string>>(*it_libpart_tuple, lib_part_pin_map));
+            std::cout << *it_libpart_tuple << std::endl;
+        }
     }
 
     // for (auto it = libpart_map.begin(); it != libpart_map.end(); it++)
