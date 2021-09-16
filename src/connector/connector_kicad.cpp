@@ -203,7 +203,7 @@ CoreCircuit::CircuitDetails *ConnectorKicadImporter::ImportCircuit(void)
 
     for (auto it = pin_to_pad_map.begin(); it != pin_to_pad_map.end(); it++)
     {
-        std::cout << "Part_ref: " << it->first << std::endl;
+        std::cout << "Part_ref: " << it->first << " Part_id: " << circuit_details->part_ref[it->first] << std::endl;
         for (auto it_pin = it->second.begin(); it_pin != it->second.end(); it_pin++)
         {
             std::cout << "  Pin: " << it_pin->first << " Pad: " << it_pin->second << std::endl;
@@ -215,6 +215,7 @@ CoreCircuit::CircuitDetails *ConnectorKicadImporter::ImportCircuit(void)
     {
         node_list.clear();
         circuit_details->net_list.push_back((*it)->values[1].second->values[0].first);
+        std::cout << "Net: " << (*it)->values[1].second->values[0].first << std::endl;
         for (auto it_node = (*it)->values.begin() + 2; it_node < (*it)->values.end(); it_node++)
         {
             std::string part_ref = it_node->second->values[0].second->values[0].first;
