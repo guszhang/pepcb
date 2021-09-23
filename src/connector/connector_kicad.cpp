@@ -1,5 +1,6 @@
 #include <fstream>
 #include <iostream>
+#include <filesystem>
 #include <cctype>
 #include <stack>
 #include <algorithm>
@@ -26,10 +27,10 @@ ConnectorKicadImporter::ConnectorKicadImporter(std::string filename)
     this->_input_file_buffer.erase(std::remove(this->_input_file_buffer.begin(), this->_input_file_buffer.end(), '\r'), this->_input_file_buffer.end());
     this->_input_file_buffer.erase(std::remove(this->_input_file_buffer.begin(), this->_input_file_buffer.end(), '\t'), this->_input_file_buffer.end());
 
-    this->root = StringToTree(this->_input_file_buffer, 0);
+    this->root = StringToTree(this->_input_file_buffer);
 }
 
-TPCBElement *ConnectorKicadImporter::StringToTree(std::string str, int pos)
+TPCBElement *ConnectorKicadImporter::StringToTree(std::string str)
 {
     TPCBElement *root = new TPCBElement;
     TPCBElement *node_pointer = root;
@@ -37,6 +38,7 @@ TPCBElement *ConnectorKicadImporter::StringToTree(std::string str, int pos)
     std::stack<TPCBElement *> node_stack;
     int string_length = str.length();
     std::string attribute = "";
+    int pos = 0;
     while (pos < string_length)
     {
         switch (str[pos])
@@ -228,4 +230,35 @@ CoreCircuit::CircuitDetails *ConnectorKicadImporter::ImportCircuit(void)
         std::cout << std::endl;
     }
     return circuit_details;
+}
+
+TPCBElement *ConnectorKicadImporter::LoadFootprint(std::string footprint_name)
+{
+    std::filesystem::path library_path("/usr/share/kicad/modules");
+    std::string module_name = footprint_name.substr(0, footprint_name.find(':'));
+    std::string package_name = footprint_name.substr(footprint_name.find(':') + 1, footprint_name.length() - 1);
+    std::filesystem::path module_path(module_name + ".pretty");
+    std::filesystem::path package_path(package_name + ".kicad_mod");
+    std::filesystem::path full_path = library_path / module_path / package_path;
+    if (!std::filesystem::exists(full_path)){
+        std::cerr << "[Error] Can't find the footprint library: " << footprint_name <<std::endl;
+        return nullptr;
+    }
+    std::ifstream footprint_file(full_path);
+    std::string line_buffer;
+    std::string footprint_file_buffer = "";
+    if (footprint_file.is_open())
+    {
+        while (getline(footprint_file, line_buffer))
+        {
+            footprint_file_buffer.append(line_buffer);
+        }
+    }
+    //std::cout << this->_input_file_buffer << std::endl;
+    footprint_file.close();
+    footprint_file_buffer.erase(std::remove(footprint_file_buffer.begin(), footprint_file_buffer.end(), '\n'), footprint_file_buffer.end());
+    footprint_file_buffer.erase(std::remove(footprint_file_buffer.begin(), footprint_file_buffer.end(), '\r'), footprint_file_buffer.end());
+    footprint_file_buffer.erase(std::remove(footprint_file_buffer.begin(), footprint_file_buffer.end(), '\t'), footprint_file_buffer.end());
+
+    return StringToTree(footprint_file_buffer);
 }
