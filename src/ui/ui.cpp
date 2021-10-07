@@ -1,8 +1,17 @@
 #include <GLFW/glfw3.h>
 #include <stdio.h>
+#include <math.h>
+
+static volatile double scale_ratio = 10;
+static volatile double scale_factor = sqrt(sqrt(2));
+static volatile int window_width = 640;
+static volatile int window_height = 480;
+static volatile int origin_x = window_width / 2;
+static volatile int origin_y = window_height / 2;
 
 void draw_rectangle()
 {
+    glLineWidth(10.f);
     glBegin(GL_LINE_LOOP);
     glColor3f(255, 0, 0);
     glVertex2f(.5f, .5f);
@@ -49,7 +58,7 @@ int main(void)
     glfwSetErrorCallback(error_callback);
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(window_width, window_height, "PEPCB Viewer", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
