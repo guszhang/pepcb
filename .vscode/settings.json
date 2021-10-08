@@ -49,5 +49,8 @@
         "numeric": "cpp",
         "random": "cpp"
     },
-    "editor.fontSize": 16
+    "editor.fontSize": 16,
+    "cSpell.words": [
+        "Pepcb"
+    ]
 }
