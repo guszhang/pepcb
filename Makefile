@@ -12,4 +12,4 @@ exec:
 	@./build/test
 
 ui:
-	@$(CC) $(SRCUI) -o build/ui -lglfw -lGL
+	@$(CC) $(SRCUI) -Isrc/core -g --std=c++17 -o build/ui -lglfw -lGL -lSOIL

@@ -8,25 +8,16 @@ namespace Pepcb
 {
     namespace Base
     {
-        typedef struct
-        {
-            int x;
-            int y;
-        } TVertex;
-
-        typedef struct
-        {
-            int layer;
-            std::vector<TVertex> vertex_list;
-        } TPolygon;
-
         enum ELayer
         {
             COLLISION_BOUNDARY,
             TOP_COPPER,
             BOTTOM_COPPER,
             TOP_SILK,
-            BOTTOM_SILK
+            BOTTOM_SILK,
+            VIA,
+            EDGE,
+            HOLE,
         };
 
         enum EPLayer
@@ -34,6 +25,32 @@ namespace Pepcb
             TOP,
             BOTTOM,
         };
+
+        enum EGeometryType
+        {
+            LINES,
+            CIRCLE,
+            POLYGON,
+        };
+
+        typedef struct{
+            uint8_t r;
+            uint8_t g;
+            uint8_t b;
+        } TColor;
+
+        typedef struct{
+            int x;
+            int y;
+        } TVertex;
+
+        typedef struct
+        {
+            ELayer layer;
+            int type;
+            std::vector<TVertex> vertex_list;
+        } TGeometry;
+
     }
     namespace CoreCircuit
     {
@@ -51,7 +68,7 @@ namespace Pepcb
         typedef struct
         {
             Base::TVertex origin; // relative position to the part's origin
-            std::multimap<Base::ELayer, Base::TPolygon> geometry_list;
+            std::multimap<Base::ELayer, Base::TGeometry> geometry_list;
         } TPad;
 
         typedef struct
@@ -59,7 +76,7 @@ namespace Pepcb
             std::string name; // for printing
             std::string value;
             std::vector<TPad> pad_list;
-            std::multimap<Base::ELayer, Base::TPolygon> geometry_list;
+            std::multimap<Base::ELayer, Base::TGeometry> geometry_list;
         } TParts;
 
         class CircuitDetails
@@ -84,7 +101,7 @@ namespace Pepcb
 
         typedef struct
         {
-            std::vector<Base::TPolygon> polygon_list;
+            std::vector<Base::TGeometry> polygon_list;
         } TCopperPieces;
 
         class candidate
