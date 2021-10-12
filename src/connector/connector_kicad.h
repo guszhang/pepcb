@@ -4,7 +4,7 @@
 #include <vector>
 #include "core.h"
 
-namespace Pepcb
+namespace PEPCB
 {
     class TPCBElement
     {
