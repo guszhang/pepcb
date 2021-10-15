@@ -6,7 +6,7 @@
 #include <algorithm>
 #include "connector_kicad.h"
 
-using namespace Pepcb;
+using namespace PEPCB;
 
 ConnectorKicadImporter::ConnectorKicadImporter(std::string filename)
 {

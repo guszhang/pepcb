@@ -3,7 +3,7 @@
 #include "connector_kicad.h"
 #include "core.h"
 
-using namespace Pepcb;
+using namespace PEPCB;
 
 int main()
 {

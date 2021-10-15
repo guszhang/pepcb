@@ -6,7 +6,7 @@
 
 #include "core.h"
 
-using namespace Pepcb::Base;
+using namespace PEPCB::Base;
 
 static double scale_ratio = 10;
 static double scale_factor = sqrt(sqrt(2));

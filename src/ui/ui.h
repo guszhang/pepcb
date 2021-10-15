@@ -1,8 +1,8 @@
 #pragma once
 
-namespace Pepcb
+namespace PEPCB
 {
-  namespace Ui{
+  namespace UI{
     
   }
 }

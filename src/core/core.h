@@ -3,8 +3,9 @@
 #include <vector>
 #include <map>
 #include <unordered_map>
+#include <string>
 
-namespace Pepcb
+namespace PEPCB
 {
     namespace Base
     {
@@ -110,5 +111,10 @@ namespace Pepcb
             std::map<int, TPartPlacement> part_list; // key: part_id
             std::map<int, TCopperPieces> net_list;   // key: net_id
         };
+    }
+
+    namespace FS
+    {
+        static std::string readFromFile(std::string _Filename);
     }
 }
