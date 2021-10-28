@@ -4,12 +4,14 @@
             "name": "Linux",
             "includePath": [
                 "${default}",
-                "${workspaceFolder}/src/core"
+                "${workspaceFolder}/src/core",
+                "/opt/homebrew/Cellar/glfw/3.3.4/include"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
             "cStandard": "gnu17",
-            "intelliSenseMode": "linux-gcc-x64"
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "macos-clang-arm"
         }
     ],
     "version": 4
