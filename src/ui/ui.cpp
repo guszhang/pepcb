@@ -1,3 +1,5 @@
+#define GL_SILENCE_DEPRECATION
+
 #include <GLFW/glfw3.h>
 #include <SOIL/SOIL.h>
 #include <stdio.h>
@@ -162,6 +164,7 @@ int main(void)
     glfwSetErrorCallback(errorCallback);
 
     /* Create a windowed mode window and its OpenGL context */
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
     window = glfwCreateWindow(window_width, window_height, "PEPCB Viewer", NULL, NULL);
     if (!window)
     {
