@@ -43,7 +43,7 @@ namespace PEPCB
         typedef struct{
             int x;
             int y;
-        } TVertex;
+        } TVertex; // Vertex positions are stored in integers, with resolution of 1 nm.
 
         typedef struct
         {
@@ -115,6 +115,6 @@ namespace PEPCB
 
     namespace FS
     {
-        static std::string readFromFile(std::string _Filename);
+        std::string readFromFile(std::string _Filename);
     }
 }

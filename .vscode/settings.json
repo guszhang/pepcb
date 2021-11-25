@@ -47,7 +47,8 @@
         "functional": "cpp",
         "iterator": "cpp",
         "numeric": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "thread": "cpp"
     },
     "editor.fontSize": 12,
     "cSpell.words": [

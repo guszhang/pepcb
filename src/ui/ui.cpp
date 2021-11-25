@@ -3,10 +3,14 @@
 #include <GLFW/glfw3.h>
 #include <SOIL/SOIL.h>
 #include <stdio.h>
+#include <iostream>
 #include <math.h>
 #include <map>
+#include <thread>
+#include <chrono>
 
 #include "core.h"
+#include "common/shader.hpp"
 
 using namespace PEPCB::Base;
 
@@ -78,6 +82,21 @@ void drawGeometry(TGeometry a)
         glVertex2f(xtrans, ytrans);
     }
     glEnd();
+
+    // // 1st attribute buffer : vertices
+    // glEnableVertexAttribArray(0);
+    // glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+    // glVertexAttribPointer(
+    //     0,        // attribute 0. No particular reason for 0, but must match the layout in the shader.
+    //     2,        // size
+    //     GL_FLOAT, // type
+    //     GL_FALSE, // normalized?
+    //     0,        // stride
+    //     (void *)0 // array buffer offset
+    // );
+    // // Draw the triangle !
+    // glDrawArrays(GL_TRIANGLES, 0, 3); // Starting from vertex 0; 3 vertices total -> 1 triangle
+    // glDisableVertexAttribArray(0);
 }
 
 void errorCallback(int error, const char *description)
@@ -165,12 +184,18 @@ int main(void)
 
     /* Create a windowed mode window and its OpenGL context */
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+
     window = glfwCreateWindow(window_width, window_height, "PEPCB Viewer", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
         return -1;
     }
+    unsigned int major = glfwGetWindowAttrib(window, GLFW_CONTEXT_VERSION_MAJOR);
+    unsigned int minor = glfwGetWindowAttrib(window, GLFW_CONTEXT_VERSION_MINOR);
+    std::cout << "oepngl shader version: " << major << "." << minor << std::endl;
 
     GLFWimage window_icons[1];
     window_icons[0].pixels = SOIL_load_image("./res/favicon.png", &window_icons[0].width, &window_icons[0].height, 0, SOIL_LOAD_AUTO);
@@ -184,6 +209,30 @@ int main(void)
 
     GLuint logo_handler = loadLogoTexture();
 
+    static const GLfloat g_vertex_buffer_data[] = {
+        -1.0f,
+        -1.0f,
+        1.0f,
+        -1.0f,
+        0.0f,
+        1.0f,
+    };
+
+    // This will identify our vertex buffer
+    GLuint vertexbuffer;
+    // Generate 1 buffer, put the resulting identifier in vertexbuffer
+    glGenBuffers(1, &vertexbuffer);
+    // The following commands will talk about our 'vertexbuffer' buffer
+    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+    // Give our vertices to OpenGL.
+    glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+
+    GLuint programID = PEPCB::UI::LoadShaders("./src/shader/polygon.vert", "./src/shader/polygon.frag");
+
+    GLint vpos_location = glGetAttribLocation(programID, "vPos");
+    glEnableVertexAttribArray(vpos_location);
+    glVertexAttribPointer(vpos_location, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (void *)0);
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
@@ -192,14 +241,19 @@ int main(void)
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        drawGeometry(testGeometry());
-        drawLogo(logo_handler);
+        //drawGeometry(testGeometry());
+        glUseProgram(programID);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        //drawLogo(logo_handler);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
 
         /* Poll for and process events */
         glfwPollEvents();
+
+        std::this_thread::sleep_for(std::chrono::nanoseconds(1000000));
     }
 
     glfwTerminate();
