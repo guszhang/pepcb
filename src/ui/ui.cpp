@@ -195,7 +195,7 @@ int main(void)
     }
     unsigned int major = glfwGetWindowAttrib(window, GLFW_CONTEXT_VERSION_MAJOR);
     unsigned int minor = glfwGetWindowAttrib(window, GLFW_CONTEXT_VERSION_MINOR);
-    std::cout << "oepngl shader version: " << major << "." << minor << std::endl;
+    std::cout << "OpenGL shader version: " << major << "." << minor << std::endl;
 
     GLFWimage window_icons[1];
     window_icons[0].pixels = SOIL_load_image("./res/favicon.png", &window_icons[0].width, &window_icons[0].height, 0, SOIL_LOAD_AUTO);
@@ -209,7 +209,7 @@ int main(void)
 
     GLuint logo_handler = loadLogoTexture();
 
-    static const GLfloat g_vertex_buffer_data[] = {
+    GLfloat g_vertex_buffer_data[] = {
         -1.0f,
         -1.0f,
         1.0f,
@@ -229,9 +229,18 @@ int main(void)
 
     GLuint programID = PEPCB::UI::LoadShaders("./src/shader/polygon.vert", "./src/shader/polygon.frag");
 
+    GLint worg_location = glGetUniformLocation(programID, "wOrigin");
+    GLint wsize_location = glGetUniformLocation(programID, "wSize");
+    GLint scale_location = glGetUniformLocation(programID, "sclae");
     GLint vpos_location = glGetAttribLocation(programID, "vPos");
     glEnableVertexAttribArray(vpos_location);
     glVertexAttribPointer(vpos_location, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (void *)0);
+
+    std::cout << vpos_location << " " << worg_location << " " << wsize_location << " " << scale_location << " " << std::endl;
+
+    float wOrigin_u[2];
+    float wSize_u[2];
+    float scale_u;
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -241,7 +250,16 @@ int main(void)
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+        wOrigin_u[0] = (float)origin_x;
+        wOrigin_u[1] = (float)origin_y;
+        wSize_u[0] = (float)window_width;
+        wSize_u[1] = (float)window_height;
+        scale_u = (float)scale_factor;
+
         //drawGeometry(testGeometry());
+        glUniform1f(scale_location, scale_u);
+        glUniform2f(worg_location, wOrigin_u[0], wOrigin_u[1]);
+        glUniform2f(wsize_location, wSize_u[0], wSize_u[1]);
         glUseProgram(programID);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
@@ -253,7 +271,7 @@ int main(void)
         /* Poll for and process events */
         glfwPollEvents();
 
-        std::this_thread::sleep_for(std::chrono::nanoseconds(1000000));
+        std::this_thread::sleep_for(std::chrono::nanoseconds(10000000));
     }
 
     glfwTerminate();
