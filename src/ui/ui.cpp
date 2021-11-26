@@ -67,38 +67,6 @@ TGeometry testGeometry()
     return a;
 }
 
-void drawGeometry(TGeometry a)
-{
-    glBegin(GL_POLYGON);
-    TColor c = layer_color[a.layer];
-    float r = c.r / 255.f;
-    float g = c.g / 255.f;
-    float b = c.b / 255.f;
-    glColor3f(r, g, b);
-    for (auto it = a.vertex_list.begin(); it < a.vertex_list.end(); it++)
-    {
-        float xtrans = (origin_x + it->x * scale_ratio) / window_width * 2.f - 1.f;
-        float ytrans = (origin_y + it->y * scale_ratio) / window_height * 2.f - 1.f;
-        glVertex2f(xtrans, ytrans);
-    }
-    glEnd();
-
-    // // 1st attribute buffer : vertices
-    // glEnableVertexAttribArray(0);
-    // glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-    // glVertexAttribPointer(
-    //     0,        // attribute 0. No particular reason for 0, but must match the layout in the shader.
-    //     2,        // size
-    //     GL_FLOAT, // type
-    //     GL_FALSE, // normalized?
-    //     0,        // stride
-    //     (void *)0 // array buffer offset
-    // );
-    // // Draw the triangle !
-    // glDrawArrays(GL_TRIANGLES, 0, 3); // Starting from vertex 0; 3 vertices total -> 1 triangle
-    // glDisableVertexAttribArray(0);
-}
-
 void errorCallback(int error, const char *description)
 {
     fprintf(stderr, "Error: %s\n", description);
@@ -210,12 +178,12 @@ int main(void)
     GLuint logo_handler = loadLogoTexture();
 
     GLfloat g_vertex_buffer_data[] = {
-        -1.0f,
-        -1.0f,
-        1.0f,
-        -1.0f,
+        -10.0f,
+        -10.0f,
+        10.0f,
+        -10.0f,
         0.0f,
-        1.0f,
+        10.0f,
     };
 
     // This will identify our vertex buffer
@@ -231,12 +199,10 @@ int main(void)
 
     GLint worg_location = glGetUniformLocation(programID, "wOrigin");
     GLint wsize_location = glGetUniformLocation(programID, "wSize");
-    GLint scale_location = glGetUniformLocation(programID, "sclae");
+    GLint scale_location = glGetUniformLocation(programID, "scale");
     GLint vpos_location = glGetAttribLocation(programID, "vPos");
     glEnableVertexAttribArray(vpos_location);
     glVertexAttribPointer(vpos_location, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (void *)0);
-
-    std::cout << vpos_location << " " << worg_location << " " << wsize_location << " " << scale_location << " " << std::endl;
 
     float wOrigin_u[2];
     float wSize_u[2];
@@ -254,13 +220,13 @@ int main(void)
         wOrigin_u[1] = (float)origin_y;
         wSize_u[0] = (float)window_width;
         wSize_u[1] = (float)window_height;
-        scale_u = (float)scale_factor;
+        scale_u = (float)scale_ratio;
 
         //drawGeometry(testGeometry());
+        glUseProgram(programID);
         glUniform1f(scale_location, scale_u);
         glUniform2f(worg_location, wOrigin_u[0], wOrigin_u[1]);
         glUniform2f(wsize_location, wSize_u[0], wSize_u[1]);
-        glUseProgram(programID);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
         //drawLogo(logo_handler);
@@ -271,7 +237,7 @@ int main(void)
         /* Poll for and process events */
         glfwPollEvents();
 
-        std::this_thread::sleep_for(std::chrono::nanoseconds(10000000));
+        std::this_thread::sleep_for(std::chrono::nanoseconds(16000000));
     }
 
     glfwTerminate();
