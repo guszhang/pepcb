@@ -1,4 +1,5 @@
 #define GL_SILENCE_DEPRECATION
+#define GL_GLEXT_PROTOTYPES
 
 #include <string>
 

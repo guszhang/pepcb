@@ -1,4 +1,5 @@
 #define GL_SILENCE_DEPRECATION
+#define GL_GLEXT_PROTOTYPES
 
 #include <GLFW/glfw3.h>
 #include <SOIL/SOIL.h>
