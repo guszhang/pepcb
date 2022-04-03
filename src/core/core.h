@@ -29,30 +29,66 @@ namespace PEPCB
 
         enum EGeometryType
         {
-            LINES,
+            LINE,
+            LOOP,
             CIRCLE,
             POLYGON,
         };
 
-        typedef struct{
+        typedef struct
+        {
             uint8_t r;
             uint8_t g;
             uint8_t b;
         } TColor;
 
-        typedef struct{
+        typedef struct
+        {
             int x;
             int y;
         } TVertex; // Vertex positions are stored in integers, with resolution of 1 nm.
 
-        typedef struct
-        {
-            ELayer layer;
-            int type;
-            std::vector<TVertex> vertex_list;
-        } TGeometry;
+        // typedef struct
+        // {
+        //     ELayer layer;
+        //     EGeometryType type;
+        //     std::vector<TVertex> vertex_list;
+        // } TGeometry;
 
+        class TGeometry
+        {
+        public:
+            ELayer layer;
+            EGeometryType type;
+        };
+
+        class TPolygon : public TGeometry
+        {
+        public:
+            std::vector<TVertex> outer_vertex_list;
+            std::vector<std::vector<TVertex>> inner_vertex_list_list;
+        };
+
+        class TLine : public TGeometry
+        {
+        public:
+            TVertex a, b;
+        };
+
+        class TLoop : public TGeometry
+        {
+        public:
+            std::vector<TVertex> vertex_list;
+        };
+
+        class TCircle : public TGeometry
+        {
+        public:
+            TVertex centre;
+            int radius;
+        };
     }
+    
     namespace CoreCircuit
     {
         typedef struct

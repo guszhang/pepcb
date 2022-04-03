@@ -57,14 +57,18 @@ void initUIConstants(void)
 
 TGeometry testGeometry()
 {
-    TGeometry a;
+    TPolygon a;
     a.layer = TOP_COPPER;
     a.type = POLYGON;
-    a.vertex_list.push_back({0, 0});
-    a.vertex_list.push_back({10, 0});
-    a.vertex_list.push_back({10, 10});
-    a.vertex_list.push_back({0, 10});
+    a.outer_vertex_list.push_back({0, 0});
+    a.outer_vertex_list.push_back({10, 0});
+    a.outer_vertex_list.push_back({10, 10});
+    a.outer_vertex_list.push_back({0, 10});
     return a;
+}
+
+GLfloat* generateVertexBuffer(std::vector<TGeometry>){
+    return nullptr;
 }
 
 void errorCallback(int error, const char *description)
@@ -178,13 +182,12 @@ int main(void)
     GLuint logo_handler = loadLogoTexture();
 
     GLfloat g_vertex_buffer_data[] = {
-        -10.0f,
-        -10.0f,
-        10.0f,
-        -10.0f,
-        0.0f,
-        10.0f,
-    };
+        -10.0f, -10.0f, 1.0f, 0.0f, 0.0f,
+        10.0f, -10.0f, 0.0f, 1.0f, 0.0f,
+        0.0f, 20.0f, 0.0f, 0.0f, 1.0f,
+        -10.0f, -10.0f, 1.0f, 0.0f, 0.0f,
+        10.0f, -10.0f, 0.0f, 1.0f, 0.0f,
+        0.0f, -20.0f, 0.0f, 0.0f, 1.0f};
 
     // This will identify our vertex buffer
     GLuint vertexbuffer;
@@ -195,14 +198,19 @@ int main(void)
     // Give our vertices to OpenGL.
     glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
 
-    GLuint programID = PEPCB::UI::LoadShaders("./src/shader/polygon.vert", "./src/shader/polygon.frag");
+    GLuint polygonProgramme = PEPCB::UI::LoadShaders("./src/shader/polygon.vert", "./src/shader/polygon.frag");
+    GLuint secondProgram = PEPCB::UI::LoadShaders("./src/shader/logo.vert", "./src/shader/logo.frag");
 
-    GLint worg_location = glGetUniformLocation(programID, "wOrigin");
-    GLint wsize_location = glGetUniformLocation(programID, "wSize");
-    GLint scale_location = glGetUniformLocation(programID, "scale");
-    GLint vpos_location = glGetAttribLocation(programID, "vPos");
+    GLint worg_location = glGetUniformLocation(polygonProgramme, "wOrigin");
+    GLint wsize_location = glGetUniformLocation(polygonProgramme, "wSize");
+    GLint scale_location = glGetUniformLocation(polygonProgramme, "scale");
+    GLint vpos_location = glGetAttribLocation(polygonProgramme, "vPos");
     glEnableVertexAttribArray(vpos_location);
-    glVertexAttribPointer(vpos_location, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (void *)0);
+    glVertexAttribPointer(vpos_location, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void *)0);
+
+    GLint vcol_location = glGetAttribLocation(polygonProgramme, "vCol");
+    glEnableVertexAttribArray(vcol_location);
+    glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void *)(sizeof(GLfloat) * 2));
 
     float wOrigin_u[2];
     float wSize_u[2];
@@ -223,11 +231,16 @@ int main(void)
         scale_u = (float)scale_ratio;
 
         //drawGeometry(testGeometry());
-        glUseProgram(programID);
+        glUseProgram(polygonProgramme);
         glUniform1f(scale_location, scale_u);
         glUniform2f(worg_location, wOrigin_u[0], wOrigin_u[1]);
         glUniform2f(wsize_location, wSize_u[0], wSize_u[1]);
         glDrawArrays(GL_TRIANGLES, 0, 3);
+        glUseProgram(secondProgram);
+        glUniform1f(scale_location, scale_u);
+        glUniform2f(worg_location, wOrigin_u[0], wOrigin_u[1]);
+        glUniform2f(wsize_location, wSize_u[0], wSize_u[1]);
+        glDrawArrays(GL_TRIANGLES, 3, 3);
 
         //drawLogo(logo_handler);
 
