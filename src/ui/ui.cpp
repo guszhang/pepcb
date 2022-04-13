@@ -18,8 +18,8 @@ using namespace PEPCB::Base;
 
 static double scale_ratio = 10;
 static double scale_factor = sqrt(sqrt(2));
-static int window_width = 640;
-static int window_height = 480;
+static int window_width = 1600;
+static int window_height = 900;
 static int origin_x = window_width / 2;
 static int origin_y = window_height / 2;
 
@@ -200,10 +200,10 @@ int main(void)
         pxToFloat(10 + 136, window_width), pxToFloat(window_height - 10 - 58, window_height), 1.0f, 1.0f,
         pxToFloat(10, window_width), pxToFloat(window_height - 10 - 58, window_height), 0.0f, 1.0f};
 
-    for (int i = 0; i < 6; i++)
-    {
-        std::cout << logo_vertex_buffer_data[i * 4] << " " << logo_vertex_buffer_data[i * 4 + 1] << " " << logo_vertex_buffer_data[i * 4 + 2] << " " << logo_vertex_buffer_data[i * 4 + 3] << " " << std::endl;
-    }
+    // for (int i = 0; i < 6; i++)
+    // {
+    //     std::cout << logo_vertex_buffer_data[i * 4] << " " << logo_vertex_buffer_data[i * 4 + 1] << " " << logo_vertex_buffer_data[i * 4 + 2] << " " << logo_vertex_buffer_data[i * 4 + 3] << " " << std::endl;
+    // }
 
     GLuint VAO_logo;
     GLuint buffer_logo;
