@@ -1,5 +1,7 @@
 #define GL_SILENCE_DEPRECATION
 #define GL_GLEXT_PROTOTYPES
+#define GLFW_INCLUDE_GLCOREARB
+
 
 #include <string>
 

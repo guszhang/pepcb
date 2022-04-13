@@ -1,5 +1,6 @@
 #define GL_SILENCE_DEPRECATION
 #define GL_GLEXT_PROTOTYPES
+#define GLFW_INCLUDE_GLCOREARB
 
 #include <GLFW/glfw3.h>
 #include <SOIL/SOIL.h>
@@ -68,7 +69,8 @@ TGeometry testGeometry()
     return a;
 }
 
-GLfloat* generateVertexBuffer(std::vector<TGeometry>){
+GLfloat *generateVertexBuffer(std::vector<TGeometry>)
+{
     return nullptr;
 }
 
@@ -124,26 +126,26 @@ GLuint loadLogoTexture(void)
     return t;
 }
 
-void drawLogo(GLuint logo)
-{
-    // glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-    // glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, logo);
-    glEnable(GL_TEXTURE_2D);
-    glColor4f(1.f, 1.f, 1.f, 1.f);
-    glBegin(GL_QUADS);
-    glTexCoord2f(0.0f, 1.0f);
-    glVertex2f(pxToFloat(10, window_width), pxToFloat(window_height - 10 - 58, window_height));
-    glTexCoord2f(0.0f, 0.0f);
-    glVertex2f(pxToFloat(10, window_width), pxToFloat(window_height - 10, window_height));
-    glTexCoord2f(1.0f, 0.0f);
-    glVertex2f(pxToFloat(10 + 136, window_width), pxToFloat(window_height - 10, window_height));
-    glTexCoord2f(1.0f, 1.0f);
-    glVertex2f(pxToFloat(10 + 136, window_width), pxToFloat(window_height - 10 - 58, window_height));
-    glEnd();
-    glDisable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, 0);
-}
+// void drawLogo(GLuint logo)
+// {
+//     // glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+//     // glActiveTexture(GL_TEXTURE0);
+//     glBindTexture(GL_TEXTURE_2D, logo);
+//     glEnable(GL_TEXTURE_2D);
+//     glColor4f(1.f, 1.f, 1.f, 1.f);
+//     glBegin(GL_QUADS);
+//     glTexCoord2f(0.0f, 1.0f);
+//     glVertex2f(pxToFloat(10, window_width), pxToFloat(window_height - 10 - 58, window_height));
+//     glTexCoord2f(0.0f, 0.0f);
+//     glVertex2f(pxToFloat(10, window_width), pxToFloat(window_height - 10, window_height));
+//     glTexCoord2f(1.0f, 0.0f);
+//     glVertex2f(pxToFloat(10 + 136, window_width), pxToFloat(window_height - 10, window_height));
+//     glTexCoord2f(1.0f, 1.0f);
+//     glVertex2f(pxToFloat(10 + 136, window_width), pxToFloat(window_height - 10 - 58, window_height));
+//     glEnd();
+//     glDisable(GL_TEXTURE_2D);
+//     glBindTexture(GL_TEXTURE_2D, 0);
+// }
 
 int main(void)
 {
@@ -157,7 +159,7 @@ int main(void)
 
     /* Create a windowed mode window and its OpenGL context */
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
     window = glfwCreateWindow(window_width, window_height, "PEPCB Viewer", NULL, NULL);
@@ -180,7 +182,7 @@ int main(void)
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
 
-    GLuint logo_handler = loadLogoTexture();
+    // GLuint logo_handler = loadLogoTexture();
 
     GLfloat g_vertex_buffer_data[] = {
         -10.0f, -10.0f, 1.0f, 0.0f, 0.0f,
@@ -190,28 +192,83 @@ int main(void)
         10.0f, -10.0f, 0.0f, 1.0f, 0.0f,
         0.0f, -20.0f, 0.0f, 0.0f, 1.0f};
 
-    // This will identify our vertex buffer
-    GLuint vertexbuffer;
-    // Generate 1 buffer, put the resulting identifier in vertexbuffer
-    glGenBuffers(1, &vertexbuffer);
-    // The following commands will talk about our 'vertexbuffer' buffer
-    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-    // Give our vertices to OpenGL.
-    glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+    GLfloat logo_vertex_buffer_data[] = {
+        pxToFloat(10, window_width), pxToFloat(window_height - 10 - 58, window_height), 0.0f, 1.0f,
+        pxToFloat(10, window_width), pxToFloat(window_height - 10, window_height), 0.0f, 0.0f,
+        pxToFloat(10 + 136, window_width), pxToFloat(window_height - 10, window_height), 1.0f, 0.0f,
+        pxToFloat(10 + 136, window_width), pxToFloat(window_height - 10, window_height), 1.0f, 0.0f,
+        pxToFloat(10 + 136, window_width), pxToFloat(window_height - 10 - 58, window_height), 1.0f, 1.0f,
+        pxToFloat(10, window_width), pxToFloat(window_height - 10 - 58, window_height), 0.0f, 1.0f};
 
+    for (int i = 0; i < 6; i++)
+    {
+        std::cout << logo_vertex_buffer_data[i * 4] << " " << logo_vertex_buffer_data[i * 4 + 1] << " " << logo_vertex_buffer_data[i * 4 + 2] << " " << logo_vertex_buffer_data[i * 4 + 3] << " " << std::endl;
+    }
+
+    GLuint VAO_logo;
+    GLuint buffer_logo;
+    GLuint texture_id = loadLogoTexture();
+    GLuint logoProgramme = PEPCB::UI::LoadShaders("./src/shader/logo.vert", "./src/shader/logo.frag");
+
+    glGenVertexArrays(1, &VAO_logo);
+    glBindVertexArray(VAO_logo);
+    glCreateBuffers(1, &buffer_logo);
+    glBindBuffer(GL_ARRAY_BUFFER, buffer_logo);
+    glBufferStorage(GL_ARRAY_BUFFER, sizeof(logo_vertex_buffer_data), logo_vertex_buffer_data, 0);
+    glUseProgram(logoProgramme);
+
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void *)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void *)(2 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(1);
+
+    GLuint VAO_polygons;
+    GLuint buffer_polygons;
     GLuint polygonProgramme = PEPCB::UI::LoadShaders("./src/shader/polygon.vert", "./src/shader/polygon.frag");
-    GLuint secondProgram = PEPCB::UI::LoadShaders("./src/shader/logo.vert", "./src/shader/logo.frag");
+    glUseProgram(polygonProgramme);
+
+    glGenVertexArrays(1, &VAO_polygons);
+    glBindVertexArray(VAO_polygons);
+    glCreateBuffers(1, &buffer_polygons);
+    glBindBuffer(GL_ARRAY_BUFFER, buffer_polygons);
+    // glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+    glBufferStorage(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, 0);
+
+    // // This will identify our vertex buffer
+    // GLuint vertexbuffer;
+    // // Generate 1 buffer, put the resulting identifier in vertexbuffer
+    // glGenBuffers(1, &vertexbuffer);
+    // // The following commands will talk about our 'vertexbuffer' buffer
+    // glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+    // // Give our vertices to OpenGL.
+    // glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+
+    // GLuint polygonProgramme = PEPCB::UI::LoadShaders("./src/shader/polygon.vert", "./src/shader/polygon.frag");
+    // GLuint secondProgram = PEPCB::UI::LoadShaders("./src/shader/logo.vert", "./src/shader/logo.frag");
 
     GLint worg_location = glGetUniformLocation(polygonProgramme, "wOrigin");
     GLint wsize_location = glGetUniformLocation(polygonProgramme, "wSize");
     GLint scale_location = glGetUniformLocation(polygonProgramme, "scale");
     GLint vpos_location = glGetAttribLocation(polygonProgramme, "vPos");
-    glEnableVertexAttribArray(vpos_location);
+
+    // static const GLint worg_location = 0;
+    // static const GLint wsize_location = 1;
+    // static const GLint scale_location = 2;
+    // static const GLint vpos_location = 3;
+    // static const GLint vcol_location = 4;
+
     glVertexAttribPointer(vpos_location, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void *)0);
+    glEnableVertexAttribArray(vpos_location);
 
     GLint vcol_location = glGetAttribLocation(polygonProgramme, "vCol");
+    glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void *)(2 * sizeof(GLfloat)));
     glEnableVertexAttribArray(vcol_location);
-    glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void *)(sizeof(GLfloat) * 2));
+
+    // std::cout << "worg loc=" << worg_location << std::endl;
+    // std::cout << "wsize loc=" << wsize_location << std::endl;
+    // std::cout << "scale loc=" << scale_location << std::endl;
+    // std::cout << "vpos loc=" << vpos_location << std::endl;
+    // std::cout << "vcol loc=" << vcol_location << std::endl;
 
     float wOrigin_u[2];
     float wSize_u[2];
@@ -231,19 +288,22 @@ int main(void)
         wSize_u[1] = (float)window_height;
         scale_u = (float)scale_ratio;
 
-        //drawGeometry(testGeometry());
+        // drawGeometry(testGeometry());
         glUseProgram(polygonProgramme);
+        glBindVertexArray(VAO_polygons);
         glUniform1f(scale_location, scale_u);
         glUniform2f(worg_location, wOrigin_u[0], wOrigin_u[1]);
         glUniform2f(wsize_location, wSize_u[0], wSize_u[1]);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-        glUseProgram(secondProgram);
-        glUniform1f(scale_location, scale_u);
-        glUniform2f(worg_location, wOrigin_u[0], wOrigin_u[1]);
-        glUniform2f(wsize_location, wSize_u[0], wSize_u[1]);
-        glDrawArrays(GL_TRIANGLES, 3, 3);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glBindVertexArray(0);
 
-        //drawLogo(logo_handler);
+        glUseProgram(logoProgramme);
+        glBindTexture(GL_TEXTURE_2D, texture_id);
+        glBindVertexArray(VAO_logo);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glBindVertexArray(0);
+
+        // drawLogo(logo_handler);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);

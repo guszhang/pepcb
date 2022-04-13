@@ -1,7 +1,9 @@
-#version 110
+#version 460 core
 
-varying vec3 color;
+in vec2 tex_coords;
+out vec4 fColor;
+uniform sampler2D tex_image;
 
 void main(){
-    gl_FragColor = vec4(color, 1.0);
+    fColor=texture(tex_image, tex_coords);
 }

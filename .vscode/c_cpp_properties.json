@@ -5,7 +5,7 @@
             "includePath": [
                 "${default}",
                 "${workspaceFolder}/src/core",
-                "/opt/homebrew/Cellar/glfw/3.3.4/include"
+                ""
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

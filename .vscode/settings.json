@@ -50,7 +50,7 @@
         "random": "cpp",
         "thread": "cpp"
     },
-    "editor.fontSize": 12,
+    "editor.fontSize": 16,
     "cSpell.words": [
         "PEPCB"
     ]

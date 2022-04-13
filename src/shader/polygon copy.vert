@@ -1,11 +1,11 @@
-#version 460 core
+#version 110
 
 uniform vec2 wOrigin;
 uniform vec2 wSize;
 uniform float scale;
-layout (location = 0) in vec2 vPos;
-layout (location = 1) in vec3 vCol;
-out vec3 color;
+attribute vec2 vPos;
+attribute vec3 vCol;
+varying vec3 color;
 
 void main() {
     gl_Position.xy = (wOrigin.xy + vPos * scale) / wSize * 2.0 - 1.0;
