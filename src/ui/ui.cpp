@@ -13,6 +13,7 @@
 
 #include "core.h"
 #include "common/shader.hpp"
+#include "common/layers.hpp"
 
 using namespace PEPCB::Base;
 
@@ -184,13 +185,29 @@ int main(void)
 
     // GLuint logo_handler = loadLogoTexture();
 
+    TPolygon p1;
+    p1.outer_vertex_list.push_back({10, 20});
+    p1.outer_vertex_list.push_back({10, 30});
+    p1.outer_vertex_list.push_back({20, 30});
+    p1.outer_vertex_list.push_back({20, 20});
+    p1.inner_vertex_list_list.push_back({});
+    p1.inner_vertex_list_list[0].push_back({12, 24});
+    p1.inner_vertex_list_list[0].push_back({14, 24});
+    p1.inner_vertex_list_list[0].push_back({14, 22});
+    p1.inner_vertex_list_list[0].push_back({12, 22});
+    PEPCB::UI::LayersRenderer lr1;
+    lr1.addPolygon(p1, ELayer::TOP_COPPER);
+    lr1.updateBuffer();
+
     GLfloat g_vertex_buffer_data[] = {
         -10.0f, -10.0f, 1.0f, 0.0f, 0.0f,
         10.0f, -10.0f, 0.0f, 1.0f, 0.0f,
         0.0f, 20.0f, 0.0f, 0.0f, 1.0f,
-        -10.0f, -10.0f, 1.0f, 0.0f, 0.0f,
-        10.0f, -10.0f, 0.0f, 1.0f, 0.0f,
         0.0f, -20.0f, 0.0f, 0.0f, 1.0f};
+
+    GLuint g_indices_data[] = {
+        0, 1, 2,
+        0, 1, 3};
 
     GLfloat logo_vertex_buffer_data[] = {
         pxToFloat(10, window_width), pxToFloat(window_height - 10 - 58, window_height), 0.0f, 1.0f,
@@ -223,16 +240,23 @@ int main(void)
     glEnableVertexAttribArray(1);
 
     GLuint VAO_polygons;
-    GLuint buffer_polygons;
+    GLuint EBO_polygons;
+    GLuint VBO_polygons;
     GLuint polygonProgramme = PEPCB::UI::LoadShaders("./src/shader/polygon.vert", "./src/shader/polygon.frag");
     glUseProgram(polygonProgramme);
 
     glGenVertexArrays(1, &VAO_polygons);
     glBindVertexArray(VAO_polygons);
-    glCreateBuffers(1, &buffer_polygons);
-    glBindBuffer(GL_ARRAY_BUFFER, buffer_polygons);
+    glCreateBuffers(1, &VBO_polygons);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_polygons);
     // glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
-    glBufferStorage(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, 0);
+    // glBufferStorage(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, 0);
+    glBufferStorage(GL_ARRAY_BUFFER, lr1.total_vertex_numbers * 5 * sizeof(GLfloat), lr1.vertex_buffer_data, 0);
+
+    glCreateBuffers(1, &EBO_polygons);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_polygons);
+    // glBufferStorage(GL_ELEMENT_ARRAY_BUFFER, sizeof(g_indices_data), g_indices_data, 0);
+    glBufferStorage(GL_ELEMENT_ARRAY_BUFFER, lr1.total_index_numbers * sizeof(GLuint), lr1.index_buffer_data, 0);
 
     // // This will identify our vertex buffer
     // GLuint vertexbuffer;
@@ -273,14 +297,14 @@ int main(void)
     float wOrigin_u[2];
     float wSize_u[2];
     float scale_u;
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         wOrigin_u[0] = (float)origin_x;
         wOrigin_u[1] = (float)origin_y;
@@ -294,7 +318,7 @@ int main(void)
         glUniform1f(scale_location, scale_u);
         glUniform2f(worg_location, wOrigin_u[0], wOrigin_u[1]);
         glUniform2f(wsize_location, wSize_u[0], wSize_u[1]);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glDrawElements(GL_TRIANGLES, lr1.total_index_numbers, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
 
         glUseProgram(logoProgramme);

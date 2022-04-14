@@ -44,8 +44,8 @@ namespace PEPCB
 
         typedef struct
         {
-            int x;
-            int y;
+            int64_t X;
+            int64_t Y;
         } TVertex; // Vertex positions are stored in integers, with resolution of 1 nm.
 
         // typedef struct

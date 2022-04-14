@@ -1,7 +1,7 @@
 CC = g++
 CFLAGS = -Isrc/connector -Isrc/core -g --std=c++17
 SRC = src/connector/connector_kicad.cpp src/test/test.cpp
-SRCUI = src/ui/ui.cpp src/core/core.cpp src/ui/common/shader.cpp
+SRCUI = src/ui/ui.cpp src/core/core.cpp src/ui/common/shader.cpp src/ui/common/layers.cpp
 
 .PHONY: test exec ui uimac
 
