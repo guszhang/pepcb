@@ -191,12 +191,18 @@ int main(void)
     p1.outer_vertex_list.push_back({20, 30});
     p1.outer_vertex_list.push_back({20, 20});
     p1.inner_vertex_list_list.push_back({});
-    p1.inner_vertex_list_list[0].push_back({12, 24});
-    p1.inner_vertex_list_list[0].push_back({14, 24});
-    p1.inner_vertex_list_list[0].push_back({14, 22});
+    p1.inner_vertex_list_list[0].push_back({12, 26});
+    p1.inner_vertex_list_list[0].push_back({16, 26});
+    p1.inner_vertex_list_list[0].push_back({16, 22});
     p1.inner_vertex_list_list[0].push_back({12, 22});
+    TPolygon p2;
+    p2.outer_vertex_list.push_back({0, 24});
+    p2.outer_vertex_list.push_back({40, 24});
+    p2.outer_vertex_list.push_back({40, 25});
+    p2.outer_vertex_list.push_back({0, 25});
     PEPCB::UI::LayersRenderer lr1;
     lr1.addPolygon(p1, ELayer::TOP_COPPER);
+    lr1.addPolygon(p2, ELayer::BOTTOM_COPPER);
     lr1.updateBuffer();
 
     GLfloat g_vertex_buffer_data[] = {

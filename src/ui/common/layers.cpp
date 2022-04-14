@@ -86,7 +86,7 @@ void LayersRenderer::addPolygon(TPolygon polygon, ELayer layer)
         buf_polygon.push_back(*it);
     }
     std::vector<uint32_t> indicies = mapbox::earcut<uint32_t>(buf_polygon);
-    uint32_t index_map_offset = this->vertex_map.size();
+    uint32_t index_map_offset = this->vertex_map[layer].size();
     for (auto it = buf_polygon.begin(); it < buf_polygon.end(); it++)
     {
         this->vertex_map[layer].insert(this->vertex_map[layer].end(), it->begin(), it->end());
@@ -105,8 +105,22 @@ void LayersRenderer::addPolygon(TPolygon polygon, ELayer layer)
     // }
 }
 
+bool cmp_layer_order(std::pair<ELayer, int> &a, std::pair<ELayer, int> &b)
+{
+    return a.second < b.second;
+}
+
 void LayersRenderer::updateBuffer()
 {
+    std::vector<std::pair<ELayer,int>> layer_sort_list;
+
+    for (auto it_l = this->vertex_map.begin(); it_l != this->vertex_map.end(); it_l++)
+    {
+        layer_sort_list.push_back(std::pair<ELayer, int>(it_l->first, this->layer_draw_rank_map[it_l->first]));
+    }
+
+    std::sort(layer_sort_list.begin(), layer_sort_list.end(), cmp_layer_order);
+
     if (this->index_buffer_data)
     {
         delete[] this->index_buffer_data;
@@ -121,9 +135,13 @@ void LayersRenderer::updateBuffer()
 
     uint32_t vertex_i = 0;
     uint32_t index_i = 0;
-    for (auto it_l = this->vertex_map.begin(); it_l != this->vertex_map.end(); it_l++)
+    for (auto it_l = layer_sort_list.begin(); it_l < layer_sort_list.end(); it_l++)
     {
-        for (auto it_v = it_l->second.begin(); it_v < it_l->second.end(); it_v++)
+        for (auto it_i = this->index_map[it_l->first].begin(); it_i < this->index_map[it_l->first].end(); it_i++)
+        {
+            this->index_buffer_data[index_i++] = (*it_i) + (vertex_i / 5);
+        }
+        for (auto it_v = this->vertex_map[it_l->first].begin(); it_v < this->vertex_map[it_l->first].end(); it_v++)
         {
             this->vertex_buffer_data[vertex_i++] = (GLfloat)it_v->X;
             this->vertex_buffer_data[vertex_i++] = (GLfloat)it_v->Y;
@@ -131,13 +149,9 @@ void LayersRenderer::updateBuffer()
             this->vertex_buffer_data[vertex_i++] = (GLfloat)(this->layer_color_map[it_l->first].g / 256.0f);
             this->vertex_buffer_data[vertex_i++] = (GLfloat)(this->layer_color_map[it_l->first].b / 256.0f);
         }
-        for (auto it_i = this->index_map[it_l->first].begin(); it_i < this->index_map[it_l->first].end(); it_i++)
-        {
-            this->index_buffer_data[index_i++] = *it_i;
-        }
     }
 
-    // for (int i = 0; i < this->total_vertex_numbers*5; i++)
+    // for (int i = 0; i < this->total_vertex_numbers * 5; i++)
     // {
     //     if (i % 5 == 4)
     //     {
