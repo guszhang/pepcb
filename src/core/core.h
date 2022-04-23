@@ -114,13 +114,13 @@ namespace PEPCB
             std::string value;
             std::vector<TPad> pad_list;
             std::multimap<Base::ELayer, Base::TGeometry> geometry_list;
-        } TParts;
+        } TPart;
 
         class CircuitDetails
         {
         public:
             std::vector<TConnection> connection_list;
-            std::vector<TParts> part_list;
+            std::vector<TPart> part_list;
             std::unordered_map<std::string, int> part_ref;
             std::vector<std::string> net_list;
         };
