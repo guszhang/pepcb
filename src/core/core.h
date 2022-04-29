@@ -13,12 +13,31 @@ namespace PEPCB
         {
             COLLISION_BOUNDARY,
             TOP_COPPER,
+            ROUTE2_COPPER,
+            ROUTE3_COPPER,
+            ROUTE4_COPPER,
+            ROUTE5_COPPER,
+            ROUTE6_COPPER,
+            ROUTE7_COPPER,
+            ROUTE8_COPPER,
+            ROUTE9_COPPER,
+            ROUTE10_COPPER,
+            ROUTE11_COPPER,
+            ROUTE12_COPPER,
+            ROUTE13_COPPER,
+            ROUTE14_COPPER,
+            ROUTE15_COPPER,
             BOTTOM_COPPER,
             TOP_SILK,
             BOTTOM_SILK,
+            TOP_MASK,
+            BOTTOM_MASK,
+            TOP_PASTE,
+            BOTTOM_PASTE,
             VIA,
             EDGE,
-            HOLE,
+            DRILL,
+            ANNOTATION,
         };
 
         enum EPLayer
@@ -30,6 +49,7 @@ namespace PEPCB
         enum EGeometryType
         {
             LINE,
+            LINE_STRIP,
             LOOP,
             CIRCLE,
             POLYGON,
@@ -40,6 +60,7 @@ namespace PEPCB
             uint8_t r;
             uint8_t g;
             uint8_t b;
+            uint8_t a;
         } TColor;
 
         typedef struct
@@ -58,7 +79,6 @@ namespace PEPCB
         class TGeometry
         {
         public:
-            ELayer layer;
             EGeometryType type;
         };
 
@@ -73,19 +93,43 @@ namespace PEPCB
         {
         public:
             TVertex a, b;
+            uint64_t width;
+        };
+
+        class TLineStrip : public TGeometry
+        {
+        public:
+            std::vector<TVertex> vertex_list;
+            uint64_t width;
         };
 
         class TLoop : public TGeometry
         {
         public:
             std::vector<TVertex> vertex_list;
+            uint64_t width;
+        };
+
+        class TCircleNonfill : public TGeometry
+        {
+        public:
+            TVertex centre;
+            uint64_t radius, width;
         };
 
         class TCircle : public TGeometry
         {
         public:
             TVertex centre;
-            int radius;
+            uint64_t radius;
+        };
+
+        class TArc : public TGeometry
+        {
+        public:
+            TVertex a, b;
+            double angle;
+            uint64_t width;
         };
     }
     
@@ -104,14 +148,16 @@ namespace PEPCB
 
         typedef struct
         {
-            Base::TVertex origin; // relative position to the part's origin
+            int net_id;
+            std::string name; // for printing
+            TVertex anchor; // geometrical center for simplified connection binding
             std::multimap<Base::ELayer, Base::TGeometry> geometry_list;
         } TPad;
 
         typedef struct
         {
             std::string name; // for printing
-            std::string value;
+            std::string value; // for printing
             std::vector<TPad> pad_list;
             std::multimap<Base::ELayer, Base::TGeometry> geometry_list;
         } TPart;
@@ -136,9 +182,16 @@ namespace PEPCB
             Base::EPLayer layer;
         } TPartPlacement;
 
+        typedef struct 
+        {
+            Base::TVertex center;
+            uint64_t pad_diameter, drill_diameter;
+        } TVia;
+        
         typedef struct
         {
-            std::vector<Base::TGeometry> polygon_list;
+            std::vector<std::multimap<Base::ELayer, Base::TPolygon>> polygon_list;
+            std::vector<TVia> via_list; // through holes only.
         } TCopperPieces;
 
         class candidate
