@@ -1,3 +1,7 @@
+// PEPCB core.h
+// Date: 03 May 2022
+// University of Manchester, Gus Zhang <cheng.zhang@manchester.ac.uk>
+
 #pragma once
 
 #include <vector>
@@ -150,7 +154,7 @@ namespace PEPCB
         {
             int net_id;
             std::string name; // for printing
-            TVertex anchor; // geometrical center for simplified connection binding
+            PEPCB::Base::TVertex anchor; // geometrical center for simplified connection binding
             std::multimap<Base::ELayer, Base::TGeometry> geometry_list;
         } TPad;
 
