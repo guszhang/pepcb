@@ -162,6 +162,8 @@ int main(void)
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
     window = glfwCreateWindow(window_width, window_height, "PEPCB Viewer", NULL, NULL);
     if (!window)
@@ -235,9 +237,11 @@ int main(void)
 
     glGenVertexArrays(1, &VAO_logo);
     glBindVertexArray(VAO_logo);
-    glCreateBuffers(1, &buffer_logo);
+    //glCreateBuffers(1, &buffer_logo);
+    glGenBuffers(1, &buffer_logo);
     glBindBuffer(GL_ARRAY_BUFFER, buffer_logo);
-    glBufferStorage(GL_ARRAY_BUFFER, sizeof(logo_vertex_buffer_data), logo_vertex_buffer_data, 0);
+    //glBufferStorage(GL_ARRAY_BUFFER, sizeof(logo_vertex_buffer_data), logo_vertex_buffer_data, 0);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(logo_vertex_buffer_data), logo_vertex_buffer_data, GL_STATIC_DRAW);
     glUseProgram(logoProgramme);
 
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void *)0);
@@ -253,16 +257,16 @@ int main(void)
 
     glGenVertexArrays(1, &VAO_polygons);
     glBindVertexArray(VAO_polygons);
-    glCreateBuffers(1, &VBO_polygons);
+    glGenBuffers(1, &VBO_polygons);
     glBindBuffer(GL_ARRAY_BUFFER, VBO_polygons);
     // glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
     // glBufferStorage(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, 0);
-    glBufferStorage(GL_ARRAY_BUFFER, lr1.total_vertex_numbers * 5 * sizeof(GLfloat), lr1.vertex_buffer_data, 0);
+    glBufferData(GL_ARRAY_BUFFER, lr1.total_vertex_numbers * 5 * sizeof(GLfloat), lr1.vertex_buffer_data, GL_STATIC_DRAW);
 
-    glCreateBuffers(1, &EBO_polygons);
+    glGenBuffers(1, &EBO_polygons);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_polygons);
     // glBufferStorage(GL_ELEMENT_ARRAY_BUFFER, sizeof(g_indices_data), g_indices_data, 0);
-    glBufferStorage(GL_ELEMENT_ARRAY_BUFFER, lr1.total_index_numbers * sizeof(GLuint), lr1.index_buffer_data, 0);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, lr1.total_index_numbers * sizeof(GLuint), lr1.index_buffer_data, GL_STATIC_DRAW);
 
     // // This will identify our vertex buffer
     // GLuint vertexbuffer;

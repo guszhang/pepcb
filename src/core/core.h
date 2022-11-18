@@ -42,6 +42,7 @@ namespace PEPCB
             EDGE,
             DRILL,
             ANNOTATION,
+            HOLE,
         };
 
         enum EPLayer
@@ -89,6 +90,7 @@ namespace PEPCB
         class TPolygon : public TGeometry
         {
         public:
+            ELayer layer;
             std::vector<TVertex> outer_vertex_list;
             std::vector<std::vector<TVertex>> inner_vertex_list_list;
         };

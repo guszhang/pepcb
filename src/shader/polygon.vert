@@ -1,4 +1,4 @@
-#version 460 core
+#version 330 core
 
 uniform vec2 wOrigin;
 uniform vec2 wSize;
