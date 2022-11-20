@@ -15,34 +15,64 @@ namespace PEPCB
     {
         enum ELayer
         {
-            COLLISION_BOUNDARY,
-            TOP_COPPER,
-            ROUTE2_COPPER,
-            ROUTE3_COPPER,
-            ROUTE4_COPPER,
-            ROUTE5_COPPER,
-            ROUTE6_COPPER,
-            ROUTE7_COPPER,
-            ROUTE8_COPPER,
-            ROUTE9_COPPER,
-            ROUTE10_COPPER,
-            ROUTE11_COPPER,
-            ROUTE12_COPPER,
-            ROUTE13_COPPER,
-            ROUTE14_COPPER,
-            ROUTE15_COPPER,
-            BOTTOM_COPPER,
-            TOP_SILK,
-            BOTTOM_SILK,
-            TOP_MASK,
-            BOTTOM_MASK,
-            TOP_PASTE,
-            BOTTOM_PASTE,
-            VIA,
-            EDGE,
-            DRILL,
-            ANNOTATION,
-            HOLE,
+            F_CU,
+            IN1_CU,
+            IN2_CU,
+            IN3_CU,
+            IN4_CU,
+            IN5_CU,
+            IN6_CU,
+            IN7_CU,
+            IN8_CU,
+            IN9_CU,
+            IN10_CU,
+            IN11_CU,
+            IN12_CU,
+            IN13_CU,
+            IN14_CU,
+            IN15_CU,
+            IN16_CU,
+            IN17_CU,
+            IN18_CU,
+            IN19_CU,
+            IN20_CU,
+            IN21_CU,
+            IN22_CU,
+            IN23_CU,
+            IN24_CU,
+            IN25_CU,
+            IN26_CU,
+            IN27_CU,
+            IN28_CU,
+            IN29_CU,
+            IN30_CU,
+            B_CU,
+            B_ADHESIVE,
+            F_ADHESIVE,
+            B_PASTE,
+            F_PASTE,
+            B_SILKSCREEN,
+            F_SILKSCREEN,
+            B_MASK,
+            F_MASK,
+            USER_DRAWINGS,
+            USER_COMMENTS,
+            USER_ECO1,
+            USER_ECO2,
+            EDGE_CU,
+            F_COURTYARD,
+            B_COURTYARD,
+            F_FAB,
+            B_FAB,
+            USER_1,
+            USER_2,
+            USER_3,
+            USER_4,
+            USER_5,
+            USER_6,
+            USER_7,
+            USER_8,
+            USER_9,
         };
 
         enum EPLayer
@@ -138,7 +168,7 @@ namespace PEPCB
             uint64_t width;
         };
     }
-    
+
     namespace CoreCircuit
     {
         typedef struct
@@ -155,14 +185,14 @@ namespace PEPCB
         typedef struct
         {
             int net_id;
-            std::string name; // for printing
+            std::string name;            // for printing
             PEPCB::Base::TVertex anchor; // geometrical center for simplified connection binding
             std::multimap<Base::ELayer, Base::TGeometry> geometry_list;
         } TPad;
 
         typedef struct
         {
-            std::string name; // for printing
+            std::string name;  // for printing
             std::string value; // for printing
             std::vector<TPad> pad_list;
             std::multimap<Base::ELayer, Base::TGeometry> geometry_list;
@@ -188,12 +218,12 @@ namespace PEPCB
             Base::EPLayer layer;
         } TPartPlacement;
 
-        typedef struct 
+        typedef struct
         {
             Base::TVertex center;
             uint64_t pad_diameter, drill_diameter;
         } TVia;
-        
+
         typedef struct
         {
             std::vector<std::multimap<Base::ELayer, Base::TPolygon>> polygon_list;
