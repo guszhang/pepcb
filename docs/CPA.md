@@ -91,7 +91,7 @@ Layers constants are defined as enum type in C++ and automatically assigned valu
 | USER_COMMENTS | User comment layer                    | Not used                       |
 | USER_ECO1     | User engineering change order layer 1 | Not used                       |
 | USER_ECO2     | User engineering change order layer 2 | Not used                       |
-| EDGE_CU       | Board outline layer                   | Placement and copper DRC rules |
+| EDGE_CUT      | Board outline layer                   | Placement and copper DRC rules |
 | F_COURTYARD   | Footprint front courtyard layer       | Placement DRC rules            |
 | B_COURTYARD   | Footprint back courtyard layer        | Placement DRC rules            |
 | F_FAB         | Footprint front fabrication layer     | Not used                       |
@@ -151,12 +151,11 @@ The numerical system uses int64_t for coordinates with a resolution of 1 nm. KiC
 
 <u> Declaration:</u> **struct** _TPart_
 
-| Property  | Type                       | Description                                                                                       |
-| --------- | -------------------------- | ------------------------------------------------------------------------------------------------- |
-| ref       | std::string                | Designator reference                                                                              |
-| value     | std::string                | Value                                                                                             |
-| pad_list  | std::vector&lt;TPad&gt;    | Pad list                                                                                          |
-
+| Property | Type                    | Description          |
+| -------- | ----------------------- | -------------------- |
+| ref      | std::string             | Designator reference |
+| value    | std::string             | Value                |
+| pad_list | std::vector&lt;TPad&gt; | Pad list             |
 
 ### Copper Boundary (Polygon)
 
