@@ -6,7 +6,6 @@
 
 #include <vector>
 #include <map>
-#include <unordered_map>
 #include <string>
 
 namespace PEPCB
@@ -193,8 +192,8 @@ namespace PEPCB
             ELayer layer_start, layer_end; // layer start < layer end; top layer always=0, bottom layer always=UINT8_MAX
         };
 
-
-        class TFootprint {
+        class TFootprint
+        {
         public:
             std::string name;
             std::map<ELayer, std::vector<TGeometry>> layer_list;
@@ -210,13 +209,13 @@ namespace PEPCB
             std::string ref;
         };
 
-        // Type Copper (piece) must be a single continuum, however, it cannot be restrained from the data structure, thus has to be checked though additional methods
+        // Type Copper (copper piece or copper continuum) must be a single continuum, however, it cannot be restrained from the data structure, thus has to be checked though additional methods
         class TCopper
         {
         public:
             std::map<ELayer, std::vector<TPolygon>> polygon_list;
             std::vector<TVia> via_list;
-            
+
             TDim clearance;
             TNet net;
             TWeighting weighting_I, weighting_dI, weighting_V, weighting_dV;
@@ -251,30 +250,10 @@ namespace PEPCB
 
     namespace GA
     {
-        typedef struct
+        class GACandidate
         {
-            Base::TVertex origin;
-            float angle;
-            Base::EPLayer layer;
-        } TPartPlacement;
-
-        typedef struct
-        {
-            Base::TVertex center;
-            uint64_t pad_diameter, drill_diameter;
-        } TVia;
-
-        typedef struct
-        {
-            std::vector<std::multimap<Base::ELayer, Base::TPolygon>> polygon_list;
-            std::vector<TVia> via_list; // through holes only.
-        } TCopperPieces;
-
-        class candidate
-        {
-        private:
-            std::map<int, TPartPlacement> part_list; // key: part_id
-            std::map<int, TCopperPieces> net_list;   // key: net_id
+        public:
+            std::vector<Base::TAggregation> aggregation_list;
         };
     }
 
