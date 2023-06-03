@@ -11,7 +11,7 @@
 #include <thread>
 #include <chrono>
 
-#include "core.h"
+#include "../core/core.h"
 #include "common/shader.hpp"
 #include "common/layers.hpp"
 
@@ -36,24 +36,24 @@ GLfloat pxToFloat(int _px, int _dimension)
 void initUIConstants(void)
 {
     layer_color = {
-        {TOP_COPPER, {231, 76, 60}},
-        {TOP_SILK, {242, 243, 244}},
-        {BOTTOM_COPPER, {52, 152, 219}},
-        {BOTTOM_SILK, {229, 231, 233}},
-        {COLLISION_BOUNDARY, {255, 255, 255}},
+        {F_CU, {231, 76, 60}},
+        {F_SILKSCREEN, {242, 243, 244}},
+        {B_CU, {52, 152, 219}},
+        {B_SILKSCREEN, {229, 231, 233}},
+        {F_COURTYARD, {255, 255, 255}},
         {VIA, {26, 188, 156}},
-        {EDGE, {255, 255, 128}},
+        {EDGE_CUTS, {255, 255, 128}},
         {HOLE, {0, 0, 0}},
     };
 
     layer_draw_rank = {
-        {TOP_COPPER, 50},
-        {TOP_SILK, 90},
-        {BOTTOM_COPPER, 20},
-        {BOTTOM_SILK, 10},
-        {COLLISION_BOUNDARY, 99},
+        {F_CU, 50},
+        {F_SILKSCREEN, 90},
+        {B_CU, 20},
+        {B_SILKSCREEN, 10},
+        {F_COURTYARD, 99},
         {VIA, 75},
-        {EDGE, 100},
+        {EDGE_CUTS, 100},
         {HOLE, 85},
     };
 }
@@ -61,7 +61,6 @@ void initUIConstants(void)
 TGeometry testGeometry()
 {
     TPolygon a;
-    a.layer = TOP_COPPER;
     a.type = POLYGON;
     a.outer_vertex_list.push_back({0, 0});
     a.outer_vertex_list.push_back({10, 0});
@@ -160,8 +159,8 @@ int main(void)
 
     /* Create a windowed mode window and its OpenGL context */
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
@@ -203,8 +202,8 @@ int main(void)
     p2.outer_vertex_list.push_back({40, 25});
     p2.outer_vertex_list.push_back({0, 25});
     PEPCB::UI::LayersRenderer lr1;
-    lr1.addPolygon(p1, ELayer::TOP_COPPER);
-    lr1.addPolygon(p2, ELayer::BOTTOM_COPPER);
+    lr1.addPolygon(p1, ELayer::F_CU);
+    lr1.addPolygon(p2, ELayer::B_CU);
     lr1.updateBuffer();
 
     GLfloat g_vertex_buffer_data[] = {

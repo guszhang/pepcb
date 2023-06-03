@@ -75,7 +75,7 @@ namespace PEPCB
             USER_COMMENTS,
             USER_ECO1,
             USER_ECO2,
-            EDGE_CUT,
+            EDGE_CUTS,
             F_COURTYARD,
             B_COURTYARD,
             F_FAB,
@@ -89,7 +89,9 @@ namespace PEPCB
             USER_7,
             USER_8,
             USER_9,
-
+            // extra defined layers
+            VIA,
+            HOLE,
             // bottom copper is always the last layer
             B_CU = UINT32_MAX,
         };

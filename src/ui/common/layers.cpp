@@ -38,24 +38,24 @@ namespace mapbox
 LayersRenderer::LayersRenderer()
 {
     this->layer_color_map = {
-        {TOP_COPPER, {231, 76, 60}},
-        {TOP_SILK, {242, 243, 244}},
-        {BOTTOM_COPPER, {52, 152, 219}},
-        {BOTTOM_SILK, {229, 231, 233}},
-        {COLLISION_BOUNDARY, {255, 255, 255}},
+        {F_CU, {231, 76, 60}},
+        {F_SILKSCREEN, {242, 243, 244}},
+        {B_CU, {52, 152, 219}},
+        {B_SILKSCREEN, {229, 231, 233}},
+        {F_COURTYARD, {255, 255, 255}},
         {VIA, {26, 188, 156}},
-        {EDGE, {255, 255, 128}},
+        {EDGE_CUTS, {255, 255, 128}},
         {HOLE, {0, 0, 0}},
     };
 
     this->layer_draw_rank_map = {
-        {TOP_COPPER, 50},
-        {TOP_SILK, 90},
-        {BOTTOM_COPPER, 20},
-        {BOTTOM_SILK, 10},
-        {COLLISION_BOUNDARY, 99},
+        {F_CU, 50},
+        {F_SILKSCREEN, 90},
+        {B_CU, 20},
+        {B_SILKSCREEN, 10},
+        {F_COURTYARD, 99},
         {VIA, 75},
-        {EDGE, 100},
+        {EDGE_CUTS, 100},
         {HOLE, 85},
     };
 
