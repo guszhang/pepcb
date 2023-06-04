@@ -207,6 +207,7 @@ namespace PEPCB
         public:
             TVertex position;
             TAngle angle;
+            EPLayer placement_layer;
             TFootprint footprint;
             std::string ref;
         };
@@ -229,7 +230,7 @@ namespace PEPCB
         class TAggregation
         {
         public:
-            std::vector<TComponent> component_list; // a list of components that has been placed down
+            std::map<std::string, TComponent> component_list; // a list of components that has been placed down
             std::vector<TPolygon> top_courtyard_list, bottom_courtyard_list;
             std::vector<TCopper> copper_list;
 
