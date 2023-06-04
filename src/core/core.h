@@ -245,6 +245,7 @@ namespace PEPCB
         {
         public:
             std::vector<Base::TComponent> component_list;
+            std::vector<std::string> net_list;
 
             std::vector<Base::TAggregation> generate_aggregation_list();
         };
