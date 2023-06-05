@@ -15,7 +15,7 @@ namespace PEPCB {
             KicadFootprintLoader(std::string _kicad_footprint_directory);
             ~KicadFootprintLoader();
 
-            PEPCB::Base::TFootprint fetch_footprint(std::string _library_directory, std::string _footprint_name);
+            PEPCB::Base::TFootprint fetchFootprint(std::string _library_directory, std::string _footprint_name);
         private:
             std::string kicad_footprint_directory;
         };

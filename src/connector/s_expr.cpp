@@ -14,7 +14,7 @@ void printTree(SENode node, int level)
     if (node.isValue)
     {
         if (node.value != "")
-            printf("%s --D> %lld --L> %d\r\n", node.value.c_str(), node.getValueDim(), node.getValueELayer());
+            printf("%s --D> %ld --L> %d\r\n", node.value.c_str(), node.getValueDim(), node.getValueELayer());
         else
             printf("{empty string}\r\n");
     }
@@ -62,7 +62,7 @@ SEReader::SEReader(std::string _se_string)
     this->se_string = _se_string;
     std::string::iterator it_ch = this->se_string.begin();
     this->root = fetch(it_ch);
-    // printTree(this->root, 0);
+    printTree(this->root, 0);
 }
 
 SENode SEReader::fetch(std::string::iterator &it_ch)

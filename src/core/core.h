@@ -240,6 +240,9 @@ namespace PEPCB
             bool isValid;
             void validate(void);
         };
+
+
+        TVertex rotate(TVertex _v, TAngle _angle);
     }
 
     namespace CoreCircuit
