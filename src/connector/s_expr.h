@@ -23,6 +23,8 @@ public:
     PEPCB::Base::TDim getValueDim();
     PEPCB::Base::TAngle getValueAngle();
     PEPCB::Base::ELayer getValueELayer();
+
+    SENode getChild(std::string child_str);
 };
 
 class SEReader

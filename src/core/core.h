@@ -201,6 +201,8 @@ namespace PEPCB
             std::string name;
             std::map<ELayer, std::vector<TGeometry>> layer_list;
             std::vector<TVia> via_list;
+            std::map<std::string, TPolygon*> pad_list;
+            void insertGeometry(ELayer _layer, TGeometry _geometry);
         };
 
         class TComponent

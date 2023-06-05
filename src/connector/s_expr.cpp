@@ -45,6 +45,18 @@ SENode::~SENode()
     // do nothing
 }
 
+SENode SENode::getChild(std::string child_str)
+{
+    for (auto it = this->children.begin(); it < this->children.end(); it++)
+    {
+        if (it->value == child_str)
+        {
+            return *it;
+        }
+    }
+    return *this;
+}
+
 SEReader::SEReader(std::string _se_string)
 {
     this->se_string = _se_string;
@@ -111,7 +123,7 @@ PEPCB::Base::TDim SENode::getValueDim()
 {
     PEPCB::Base::TDim dimension = 0;
     bool before_decimal = true;
-    int64_t mul_after_decimal = 100000000;
+    int64_t mul_after_decimal = 100000;
     int sign = 1;
     for (auto it = this->value.begin(); it < this->value.end(); it++)
     {
@@ -124,7 +136,7 @@ PEPCB::Base::TDim SENode::getValueDim()
             if (before_decimal)
             {
 
-                dimension += dimension * 10 + (*it - '0') * 1000000000;
+                dimension = dimension * 10 + (*it - '0') * 1000000;
             }
             else
             {
@@ -143,7 +155,7 @@ PEPCB::Base::TDim SENode::getValueDim()
 
 PEPCB::Base::TAngle SENode::getValueAngle()
 {
-    PEPCB::Base::TAngle angle = this->getValueDim() / 100000000;
+    PEPCB::Base::TAngle angle = this->getValueDim() / 100000;
     return angle;
 }
 
