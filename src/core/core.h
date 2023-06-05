@@ -12,11 +12,11 @@ namespace PEPCB
 {
     namespace Base
     {
-        // Length representation: in uint64_t with a minimum resolution of 1 nm;
-        typedef uint64_t TDim;
+        // Length representation: in int64_t with a minimum resolution of 1 nm;
+        typedef int64_t TDim;
 
-        // Angle representation: in uint32_t with a minimum resolution of 0.1 degree. Thus only using range 0-3599. Using uint32 because of memory alignment.
-        typedef uint32_t TAngle;
+        // Angle representation: in int32_t with a minimum resolution of 0.1 degree. Thus only using range 0-3599. Using uint32 because of memory alignment.
+        typedef int32_t TAngle;
 
         // Layer used in vias representation:
         typedef uint32_t TLayer;
@@ -92,6 +92,7 @@ namespace PEPCB
             // extra defined layers
             VIA,
             HOLE,
+            UNRECOGNISED,
             // bottom copper is always the last layer
             B_CU = UINT32_MAX,
         };
