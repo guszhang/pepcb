@@ -8,16 +8,21 @@
 #include <cstring>
 #include <iostream>
 
-namespace PEPCB {
-    namespace Connector {
-        class KicadFootprintLoader{
+namespace PEPCB
+{
+    namespace Connector
+    {
+        class KicadFootprintLoader
+        {
         public:
             KicadFootprintLoader(std::string _kicad_footprint_directory);
             ~KicadFootprintLoader();
 
             PEPCB::Base::TFootprint fetchFootprint(std::string _library_directory, std::string _footprint_name);
+
         private:
             std::string kicad_footprint_directory;
+            void addPad(std::string _pad_name, PEPCB::Base::TCopper);
         };
     }
 }

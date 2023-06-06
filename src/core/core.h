@@ -130,6 +130,8 @@ namespace PEPCB
             TDim Y;
         } TVertex; // Vertex positions are stored in integers, with resolution of 1 nm.
 
+        TVertex rotate(TVertex _v, TAngle _angle);
+
         // Type Geometry
         class TGeometry
         {
@@ -195,26 +197,6 @@ namespace PEPCB
             ELayer layer_start, layer_end; // layer start < layer end; top layer always=0, bottom layer always=UINT8_MAX
         };
 
-        class TFootprint
-        {
-        public:
-            std::string name;
-            std::map<ELayer, std::vector<TGeometry>> layer_list;
-            std::vector<TVia> via_list;
-            std::map<std::string, TPolygon*> pad_list;
-            void insertGeometry(ELayer _layer, TGeometry _geometry);
-        };
-
-        class TComponent
-        {
-        public:
-            TVertex position;
-            TAngle angle;
-            EPLayer placement_layer;
-            TFootprint footprint;
-            std::string ref;
-        };
-
         // Type Copper (copper piece or copper continuum) must be a single continuum, however, it cannot be restrained from the data structure, thus has to be checked though additional methods
         class TCopper
         {
@@ -228,6 +210,27 @@ namespace PEPCB
 
             bool isValid;
             void validate(void);
+            void addPolygon(ELayer _layer, TPolygon _polygon);
+        };
+
+        class TFootprint
+        {
+        public:
+            std::string name;
+            std::map<ELayer, std::vector<TGeometry>> layer_list;
+            std::vector<TVia> via_list;
+            std::map<std::string, TCopper> pad_list;
+            void insertGeometry(ELayer _layer, TGeometry _geometry);
+        };
+
+        class TComponent
+        {
+        public:
+            TVertex position;
+            TAngle angle;
+            EPLayer placement_layer;
+            TFootprint footprint;
+            std::string ref;
         };
 
         class TAggregation
@@ -240,9 +243,6 @@ namespace PEPCB
             bool isValid;
             void validate(void);
         };
-
-
-        TVertex rotate(TVertex _v, TAngle _angle);
     }
 
     namespace CoreCircuit

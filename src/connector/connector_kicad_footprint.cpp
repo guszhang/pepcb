@@ -100,6 +100,7 @@ PEPCB::Base::TFootprint KicadFootprintLoader::fetchFootprint(std::string _librar
                 PEPCB::Base::TVertex centre;
                 PEPCB::Base::TAngle angle = 0;
                 PEPCB::Base::TDim sizeX, sizeY;
+                PEPCB::Base::TCopper pad_copper;
                 std::vector<PEPCB::Base::ELayer> layers;
                 if (it->children[3].value == "roundrect" || it->children[3].value == "rect")
                 {
@@ -132,7 +133,9 @@ PEPCB::Base::TFootprint KicadFootprintLoader::fetchFootprint(std::string _librar
                 for (auto it_a = layers.begin(); it_a < layers.end(); it_a++)
                 {
                     footprint.insertGeometry(*it_a, polygon);
+                    pad_copper.addPolygon(*it_a, polygon);
                 }
+                footprint.pad_list.insert(std::pair<std::string, PEPCB::Base::TCopper>(pad_name, pad_copper));
             }
         }
     }

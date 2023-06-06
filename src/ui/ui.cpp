@@ -1,19 +1,4 @@
-#define GL_SILENCE_DEPRECATION
-#define GL_GLEXT_PROTOTYPES
-#define GLFW_INCLUDE_GLCOREARB
-
-#include <GLFW/glfw3.h>
-#include <SOIL/SOIL.h>
-#include <stdio.h>
-#include <iostream>
-#include <math.h>
-#include <map>
-#include <thread>
-#include <chrono>
-
-#include "../core/core.h"
-#include "common/shader.hpp"
-#include "common/layers.hpp"
+#include "ui.h"
 
 using namespace PEPCB::Base;
 
@@ -23,63 +8,83 @@ static int window_width = 1600;
 static int window_height = 900;
 static int origin_x = window_width / 2;
 static int origin_y = window_height / 2;
+// initUIConstants();
+static GLFWwindow *window;
 
-static std::map<ELayer, TColor> layer_color;
-static std::map<ELayer, int> layer_draw_rank;
+static GLuint VAO_logo;
+static GLuint buffer_logo;
+static GLuint texture_id;
+static GLuint logoProgramme;
+static GLuint VAO_polygons;
+static GLuint EBO_polygons;
+static GLuint VBO_polygons;
+static GLuint polygonProgramme;
+static GLint worg_location;
+static GLint wsize_location;
+static GLint scale_location;
+static GLint vpos_location;
+static GLint vcol_location;
+static float wOrigin_u[2];
+static float wSize_u[2];
+static float scale_u;
 
-GLfloat pxToFloat(int _px, int _dimension)
+static PEPCB::UI::LayersRenderer LR;
+// static std::map<ELayer, TColor> layer_color;
+// static std::map<ELayer, int> layer_draw_rank;
+
+GLfloat PEPCB::UI::pxToFloat(int _px, int _dimension)
 {
     GLfloat f = (GLfloat)(_px) / (GLfloat)(_dimension)*2.f - 1.f;
     return f;
 }
 
-void initUIConstants(void)
-{
-    layer_color = {
-        {F_CU, {231, 76, 60}},
-        {F_SILKSCREEN, {242, 243, 244}},
-        {B_CU, {52, 152, 219}},
-        {B_SILKSCREEN, {229, 231, 233}},
-        {F_COURTYARD, {255, 255, 255}},
-        {VIA, {26, 188, 156}},
-        {EDGE_CUTS, {255, 255, 128}},
-        {HOLE, {0, 0, 0}},
-    };
+// void initUIConstants(void)
+// {
+//     layer_color = {
+//         {F_CU, {231, 76, 60}},
+//         {F_SILKSCREEN, {242, 243, 244}},
+//         {B_CU, {52, 152, 219}},
+//         {B_SILKSCREEN, {229, 231, 233}},
+//         {F_COURTYARD, {255, 255, 255}},
+//         {VIA, {26, 188, 156}},
+//         {EDGE_CUTS, {255, 255, 128}},
+//         {HOLE, {0, 0, 0}},
+//     };
 
-    layer_draw_rank = {
-        {F_CU, 50},
-        {F_SILKSCREEN, 90},
-        {B_CU, 20},
-        {B_SILKSCREEN, 10},
-        {F_COURTYARD, 99},
-        {VIA, 75},
-        {EDGE_CUTS, 100},
-        {HOLE, 85},
-    };
-}
+//     layer_draw_rank = {
+//         {F_CU, 50},
+//         {F_SILKSCREEN, 90},
+//         {B_CU, 20},
+//         {B_SILKSCREEN, 10},
+//         {F_COURTYARD, 99},
+//         {VIA, 75},
+//         {EDGE_CUTS, 100},
+//         {HOLE, 85},
+//     };
+// }
 
-TGeometry testGeometry()
-{
-    TPolygon a;
-    a.type = POLYGON;
-    a.outer_vertex_list.push_back({0, 0});
-    a.outer_vertex_list.push_back({10, 0});
-    a.outer_vertex_list.push_back({10, 10});
-    a.outer_vertex_list.push_back({0, 10});
-    return a;
-}
+// TGeometry testGeometry()
+// {
+//     TPolygon a;
+//     a.type = POLYGON;
+//     a.outer_vertex_list.push_back({0, 0});
+//     a.outer_vertex_list.push_back({10, 0});
+//     a.outer_vertex_list.push_back({10, 10});
+//     a.outer_vertex_list.push_back({0, 10});
+//     return a;
+// }
 
-GLfloat *generateVertexBuffer(std::vector<TGeometry>)
-{
-    return nullptr;
-}
+// GLfloat *generateVertexBuffer(std::vector<TGeometry>)
+// {
+//     return nullptr;
+// }
 
-void errorCallback(int error, const char *description)
+void PEPCB::UI::errorCallback(int error, const char *description)
 {
     fprintf(stderr, "Error: %s\n", description);
 }
 
-void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
+void PEPCB::UI::keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
     {
@@ -87,7 +92,7 @@ void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods
     }
 }
 
-void scrollCallback(GLFWwindow *window, double xoffset, double yoffset)
+void PEPCB::UI::scrollCallback(GLFWwindow *window, double xoffset, double yoffset)
 {
     /*
         relocate the origin subject to the cursor
@@ -110,7 +115,30 @@ void scrollCallback(GLFWwindow *window, double xoffset, double yoffset)
     }
 }
 
-GLuint loadLogoTexture(void)
+void PEPCB::UI::loadUILayers(void)
+{
+    TPolygon p1;
+    p1.outer_vertex_list.push_back({10, 20});
+    p1.outer_vertex_list.push_back({10, 30});
+    p1.outer_vertex_list.push_back({20, 30});
+    p1.outer_vertex_list.push_back({20, 20});
+    p1.inner_vertex_list_list.push_back({});
+    p1.inner_vertex_list_list[0].push_back({12, 26});
+    p1.inner_vertex_list_list[0].push_back({16, 26});
+    p1.inner_vertex_list_list[0].push_back({16, 22});
+    p1.inner_vertex_list_list[0].push_back({12, 22});
+    TPolygon p2;
+    p2.outer_vertex_list.push_back({0, 24});
+    p2.outer_vertex_list.push_back({40, 24});
+    p2.outer_vertex_list.push_back({40, 25});
+    p2.outer_vertex_list.push_back({0, 25});
+
+    LR.addPolygon(p1, ELayer::F_CU);
+    LR.addPolygon(p2, ELayer::B_CU);
+    LR.updateBuffer();
+}
+
+GLuint PEPCB::UI::loadLogoTexture(void)
 {
     GLuint t;
     uint8_t *data;
@@ -147,15 +175,14 @@ GLuint loadLogoTexture(void)
 //     glBindTexture(GL_TEXTURE_2D, 0);
 // }
 
-int main(void)
+void PEPCB::UI::startUI(int _window_width, int _window_height)
 {
-    initUIConstants();
-    GLFWwindow *window;
-
+    window_width = _window_width;
+    window_height = _window_height;
     /* Initialize the library */
     if (!glfwInit())
-        return -1;
-    glfwSetErrorCallback(errorCallback);
+        PEPCB::UI::errorCallback(-1, "glfwInit() Error.");
+    glfwSetErrorCallback(PEPCB::UI::errorCallback);
 
     /* Create a windowed mode window and its OpenGL context */
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
@@ -168,7 +195,8 @@ int main(void)
     if (!window)
     {
         glfwTerminate();
-        return -1;
+        PEPCB::UI::errorCallback(-1, "GL window not created.");
+        return;
     }
     unsigned int major = glfwGetWindowAttrib(window, GLFW_CONTEXT_VERSION_MAJOR);
     unsigned int minor = glfwGetWindowAttrib(window, GLFW_CONTEXT_VERSION_MINOR);
@@ -179,32 +207,12 @@ int main(void)
     glfwSetWindowIcon(window, 1, window_icons);
     SOIL_free_image_data(window_icons[0].pixels);
 
-    glfwSetKeyCallback(window, keyCallback);
-    glfwSetScrollCallback(window, scrollCallback);
+    glfwSetKeyCallback(window, PEPCB::UI::keyCallback);
+    glfwSetScrollCallback(window, PEPCB::UI::scrollCallback);
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
 
     // GLuint logo_handler = loadLogoTexture();
-
-    TPolygon p1;
-    p1.outer_vertex_list.push_back({10, 20});
-    p1.outer_vertex_list.push_back({10, 30});
-    p1.outer_vertex_list.push_back({20, 30});
-    p1.outer_vertex_list.push_back({20, 20});
-    p1.inner_vertex_list_list.push_back({});
-    p1.inner_vertex_list_list[0].push_back({12, 26});
-    p1.inner_vertex_list_list[0].push_back({16, 26});
-    p1.inner_vertex_list_list[0].push_back({16, 22});
-    p1.inner_vertex_list_list[0].push_back({12, 22});
-    TPolygon p2;
-    p2.outer_vertex_list.push_back({0, 24});
-    p2.outer_vertex_list.push_back({40, 24});
-    p2.outer_vertex_list.push_back({40, 25});
-    p2.outer_vertex_list.push_back({0, 25});
-    PEPCB::UI::LayersRenderer lr1;
-    lr1.addPolygon(p1, ELayer::F_CU);
-    lr1.addPolygon(p2, ELayer::B_CU);
-    lr1.updateBuffer();
 
     GLfloat g_vertex_buffer_data[] = {
         -10.0f, -10.0f, 1.0f, 0.0f, 0.0f,
@@ -217,29 +225,27 @@ int main(void)
         0, 1, 3};
 
     GLfloat logo_vertex_buffer_data[] = {
-        pxToFloat(10, window_width), pxToFloat(window_height - 10 - 58, window_height), 0.0f, 1.0f,
-        pxToFloat(10, window_width), pxToFloat(window_height - 10, window_height), 0.0f, 0.0f,
-        pxToFloat(10 + 136, window_width), pxToFloat(window_height - 10, window_height), 1.0f, 0.0f,
-        pxToFloat(10 + 136, window_width), pxToFloat(window_height - 10, window_height), 1.0f, 0.0f,
-        pxToFloat(10 + 136, window_width), pxToFloat(window_height - 10 - 58, window_height), 1.0f, 1.0f,
-        pxToFloat(10, window_width), pxToFloat(window_height - 10 - 58, window_height), 0.0f, 1.0f};
+        PEPCB::UI::pxToFloat(10, window_width), PEPCB::UI::pxToFloat(window_height - 10 - 58, window_height), 0.0f, 1.0f,
+        PEPCB::UI::pxToFloat(10, window_width), PEPCB::UI::pxToFloat(window_height - 10, window_height), 0.0f, 0.0f,
+        PEPCB::UI::pxToFloat(10 + 136, window_width), PEPCB::UI::pxToFloat(window_height - 10, window_height), 1.0f, 0.0f,
+        PEPCB::UI::pxToFloat(10 + 136, window_width), PEPCB::UI::pxToFloat(window_height - 10, window_height), 1.0f, 0.0f,
+        PEPCB::UI::pxToFloat(10 + 136, window_width), PEPCB::UI::pxToFloat(window_height - 10 - 58, window_height), 1.0f, 1.0f,
+        PEPCB::UI::pxToFloat(10, window_width), PEPCB::UI::pxToFloat(window_height - 10 - 58, window_height), 0.0f, 1.0f};
 
     // for (int i = 0; i < 6; i++)
     // {
     //     std::cout << logo_vertex_buffer_data[i * 4] << " " << logo_vertex_buffer_data[i * 4 + 1] << " " << logo_vertex_buffer_data[i * 4 + 2] << " " << logo_vertex_buffer_data[i * 4 + 3] << " " << std::endl;
     // }
 
-    GLuint VAO_logo;
-    GLuint buffer_logo;
-    GLuint texture_id = loadLogoTexture();
-    GLuint logoProgramme = PEPCB::UI::LoadShaders("./src/shader/logo.vert", "./src/shader/logo.frag");
+    texture_id = PEPCB::UI::loadLogoTexture();
+    logoProgramme = PEPCB::UI::LoadShaders("./src/shader/logo.vert", "./src/shader/logo.frag");
 
     glGenVertexArrays(1, &VAO_logo);
     glBindVertexArray(VAO_logo);
-    //glCreateBuffers(1, &buffer_logo);
+    // glCreateBuffers(1, &buffer_logo);
     glGenBuffers(1, &buffer_logo);
     glBindBuffer(GL_ARRAY_BUFFER, buffer_logo);
-    //glBufferStorage(GL_ARRAY_BUFFER, sizeof(logo_vertex_buffer_data), logo_vertex_buffer_data, 0);
+    // glBufferStorage(GL_ARRAY_BUFFER, sizeof(logo_vertex_buffer_data), logo_vertex_buffer_data, 0);
     glBufferData(GL_ARRAY_BUFFER, sizeof(logo_vertex_buffer_data), logo_vertex_buffer_data, GL_STATIC_DRAW);
     glUseProgram(logoProgramme);
 
@@ -248,10 +254,7 @@ int main(void)
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void *)(2 * sizeof(GLfloat)));
     glEnableVertexAttribArray(1);
 
-    GLuint VAO_polygons;
-    GLuint EBO_polygons;
-    GLuint VBO_polygons;
-    GLuint polygonProgramme = PEPCB::UI::LoadShaders("./src/shader/polygon.vert", "./src/shader/polygon.frag");
+    polygonProgramme = PEPCB::UI::LoadShaders("./src/shader/polygon.vert", "./src/shader/polygon.frag");
     glUseProgram(polygonProgramme);
 
     glGenVertexArrays(1, &VAO_polygons);
@@ -260,12 +263,12 @@ int main(void)
     glBindBuffer(GL_ARRAY_BUFFER, VBO_polygons);
     // glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
     // glBufferStorage(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, 0);
-    glBufferData(GL_ARRAY_BUFFER, lr1.total_vertex_numbers * 5 * sizeof(GLfloat), lr1.vertex_buffer_data, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, LR.total_vertex_numbers * 5 * sizeof(GLfloat), LR.vertex_buffer_data, GL_STATIC_DRAW);
 
     glGenBuffers(1, &EBO_polygons);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_polygons);
     // glBufferStorage(GL_ELEMENT_ARRAY_BUFFER, sizeof(g_indices_data), g_indices_data, 0);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, lr1.total_index_numbers * sizeof(GLuint), lr1.index_buffer_data, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, LR.total_index_numbers * sizeof(GLuint), LR.index_buffer_data, GL_STATIC_DRAW);
 
     // // This will identify our vertex buffer
     // GLuint vertexbuffer;
@@ -279,10 +282,10 @@ int main(void)
     // GLuint polygonProgramme = PEPCB::UI::LoadShaders("./src/shader/polygon.vert", "./src/shader/polygon.frag");
     // GLuint secondProgram = PEPCB::UI::LoadShaders("./src/shader/logo.vert", "./src/shader/logo.frag");
 
-    GLint worg_location = glGetUniformLocation(polygonProgramme, "wOrigin");
-    GLint wsize_location = glGetUniformLocation(polygonProgramme, "wSize");
-    GLint scale_location = glGetUniformLocation(polygonProgramme, "scale");
-    GLint vpos_location = glGetAttribLocation(polygonProgramme, "vPos");
+    worg_location = glGetUniformLocation(polygonProgramme, "wOrigin");
+    wsize_location = glGetUniformLocation(polygonProgramme, "wSize");
+    scale_location = glGetUniformLocation(polygonProgramme, "scale");
+    vpos_location = glGetAttribLocation(polygonProgramme, "vPos");
 
     // static const GLint worg_location = 0;
     // static const GLint wsize_location = 1;
@@ -293,7 +296,7 @@ int main(void)
     glVertexAttribPointer(vpos_location, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void *)0);
     glEnableVertexAttribArray(vpos_location);
 
-    GLint vcol_location = glGetAttribLocation(polygonProgramme, "vCol");
+    vcol_location = glGetAttribLocation(polygonProgramme, "vCol");
     glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void *)(2 * sizeof(GLfloat)));
     glEnableVertexAttribArray(vcol_location);
 
@@ -303,12 +306,8 @@ int main(void)
     // std::cout << "vpos loc=" << vpos_location << std::endl;
     // std::cout << "vcol loc=" << vcol_location << std::endl;
 
-    float wOrigin_u[2];
-    float wSize_u[2];
-    float scale_u;
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
@@ -327,7 +326,7 @@ int main(void)
         glUniform1f(scale_location, scale_u);
         glUniform2f(worg_location, wOrigin_u[0], wOrigin_u[1]);
         glUniform2f(wsize_location, wSize_u[0], wSize_u[1]);
-        glDrawElements(GL_TRIANGLES, lr1.total_index_numbers, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, LR.total_index_numbers, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
 
         glUseProgram(logoProgramme);
@@ -348,5 +347,5 @@ int main(void)
     }
 
     glfwTerminate();
-    return 0;
+    return;
 }

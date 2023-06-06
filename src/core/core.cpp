@@ -36,7 +36,7 @@ void PEPCB::Base::TFootprint::insertGeometry(ELayer _layer, TGeometry _geometry)
     this->layer_list[_layer].push_back(_geometry);
 }
 
-PEPCB::Base::TVertex rotate(PEPCB::Base::TVertex _v, PEPCB::Base::TAngle _angle)
+PEPCB::Base::TVertex PEPCB::Base::rotate(PEPCB::Base::TVertex _v, PEPCB::Base::TAngle _angle)
 {
     double angle = _angle / 1800 * M_PI;
     double cos_a = cos(angle);
@@ -45,4 +45,28 @@ PEPCB::Base::TVertex rotate(PEPCB::Base::TVertex _v, PEPCB::Base::TAngle _angle)
     new_v.X = (PEPCB::Base::TDim)(_v.X * cos_a) - (PEPCB::Base::TDim)(_v.Y * sin_a);
     new_v.Y = (PEPCB::Base::TDim)(_v.X * sin_a) - (PEPCB::Base::TDim)(_v.Y * cos_a);
     return new_v;
+}
+
+bool isCopperLayer(PEPCB::Base::ELayer _layer){
+    switch(_layer){
+        case PEPCB::Base::F_CU ... PEPCB::Base::IN30_CU:
+        case PEPCB::Base::B_CU:
+            return true;
+            break;
+        default:
+            return false;
+            break;
+    }
+}
+void PEPCB::Base::TCopper::addPolygon(PEPCB::Base::ELayer _layer, PEPCB::Base::TPolygon _polygon){
+    if(isCopperLayer(_layer)){
+        if(this->polygon_list.find(_layer)==this->polygon_list.end()){
+            std::vector<PEPCB::Base::TPolygon> polygons;
+            polygons.push_back(_polygon);
+            this->polygon_list.insert(std::pair<PEPCB::Base::ELayer, std::vector<PEPCB::Base::TPolygon>>(_layer, polygons));
+        }
+        else{
+            this->polygon_list[_layer].push_back(_polygon);
+        }
+    }
 }

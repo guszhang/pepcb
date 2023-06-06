@@ -38,11 +38,12 @@ namespace mapbox
 LayersRenderer::LayersRenderer()
 {
     this->layer_color_map = {
+        {F_COURTYARD, {255, 255, 255}},
         {F_CU, {231, 76, 60}},
         {F_SILKSCREEN, {242, 243, 244}},
         {B_CU, {52, 152, 219}},
         {B_SILKSCREEN, {229, 231, 233}},
-        {F_COURTYARD, {255, 255, 255}},
+        {B_COURTYARD, {128, 128, 128}},
         {VIA, {26, 188, 156}},
         {EDGE_CUTS, {255, 255, 128}},
         {HOLE, {0, 0, 0}},
@@ -112,7 +113,7 @@ bool cmp_layer_order(std::pair<ELayer, int> &a, std::pair<ELayer, int> &b)
 
 void LayersRenderer::updateBuffer()
 {
-    std::vector<std::pair<ELayer,int>> layer_sort_list;
+    std::vector<std::pair<ELayer, int>> layer_sort_list;
 
     for (auto it_l = this->vertex_map.begin(); it_l != this->vertex_map.end(); it_l++)
     {
