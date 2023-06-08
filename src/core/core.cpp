@@ -47,26 +47,51 @@ PEPCB::Base::TVertex PEPCB::Base::rotate(PEPCB::Base::TVertex _v, PEPCB::Base::T
     return new_v;
 }
 
-bool isCopperLayer(PEPCB::Base::ELayer _layer){
-    switch(_layer){
-        case PEPCB::Base::F_CU ... PEPCB::Base::IN30_CU:
-        case PEPCB::Base::B_CU:
-            return true;
-            break;
-        default:
-            return false;
-            break;
+bool isCopperLayer(PEPCB::Base::ELayer _layer)
+{
+    switch (_layer)
+    {
+    case PEPCB::Base::F_CU... PEPCB::Base::IN30_CU:
+    case PEPCB::Base::B_CU:
+        return true;
+        break;
+    default:
+        return false;
+        break;
     }
 }
-void PEPCB::Base::TCopper::addPolygon(PEPCB::Base::ELayer _layer, PEPCB::Base::TPolygon _polygon){
-    if(isCopperLayer(_layer)){
-        if(this->polygon_list.find(_layer)==this->polygon_list.end()){
+void PEPCB::Base::TCopper::addPolygon(PEPCB::Base::ELayer _layer, PEPCB::Base::TPolygon _polygon)
+{
+    if (isCopperLayer(_layer))
+    {
+        if (this->polygon_list.find(_layer) == this->polygon_list.end())
+        {
             std::vector<PEPCB::Base::TPolygon> polygons;
             polygons.push_back(_polygon);
             this->polygon_list.insert(std::pair<PEPCB::Base::ELayer, std::vector<PEPCB::Base::TPolygon>>(_layer, polygons));
         }
-        else{
+        else
+        {
             this->polygon_list[_layer].push_back(_polygon);
+        }
+    }
+}
+
+void PEPCB::Base::TGeometry::log(std::string name)
+{
+    std::cout << "Geometry: " << name << std::endl;
+    std::cout << "Outer Vertices: " << this->outer_vertex_list.size() << std::endl;
+    for (auto it = this->outer_vertex_list.begin(); it < this->outer_vertex_list.end(); it++)
+    {
+        std::cout << "(" << it->X << ", " << it->Y << ")" << std::endl;
+    }
+    std::cout << "Holes: " << this->inner_vertex_list_list.size() << std::endl;
+    for (auto it = this->inner_vertex_list_list.begin(); it < this->inner_vertex_list_list.end(); it++)
+    {
+        std::cout << "Inner Vertices: " << it->size() << std::endl;
+        for (auto it_vertex = it->begin(); it_vertex < it->end(); it_vertex++)
+        {
+            std::cout << "(" << it_vertex->X << ", " << it_vertex->Y << ")";
         }
     }
 }

@@ -12,6 +12,7 @@
 #include <map>
 #include <thread>
 #include <chrono>
+#include <string>
 
 #include "../core/core.h"
 #include "common/shader.hpp"

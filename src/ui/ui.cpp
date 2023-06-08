@@ -2,12 +2,12 @@
 
 using namespace PEPCB::Base;
 
-static double scale_ratio = 1;
+static double scale_ratio = 1e-4;
 static double scale_factor = sqrt(sqrt(2));
-static int window_width = 1600;
-static int window_height = 900;
-static int origin_x = window_width / 2;
-static int origin_y = window_height / 2;
+static int window_width;  // = 1600;
+static int window_height; // = 900;
+static int origin_x;      // = window_width / 2;
+static int origin_y;      // = window_height / 2;
 // initUIConstants();
 static GLFWwindow *window;
 
@@ -121,8 +121,8 @@ void PEPCB::UI::addFootprint(PEPCB::Base::TFootprint footprint)
     {
         for (auto it_element = it_layer->second.begin(); it_element < it_layer->second.end(); it_element++)
         {
-
             LR.addGeometry(*it_element, it_layer->first);
+            it_element->log("polygon on layer " + std::to_string(it_layer->first));
         }
     }
 }
@@ -145,8 +145,15 @@ void PEPCB::UI::loadUILayers(void)
     // p2.outer_vertex_list.push_back({40, 25});
     // p2.outer_vertex_list.push_back({0, 25});
 
+    TPolygon p2;
+    p2.outer_vertex_list.push_back({1000000, 1000000});
+    p2.outer_vertex_list.push_back({1000000, -1000000});
+    p2.outer_vertex_list.push_back({-1000000, -1000000});
+    p2.outer_vertex_list.push_back({-1000000, 1000000});
+
     // LR.addPolygon(p1, ELayer::F_CU);
-    // LR.addPolygon(p2, ELayer::B_CU);
+    LR.addGeometry(p2, ELayer::B_CU);
+
     LR.updateBuffer();
 }
 
@@ -191,6 +198,9 @@ void PEPCB::UI::startUI(int _window_width, int _window_height)
 {
     window_width = _window_width;
     window_height = _window_height;
+    origin_x = window_width / 2;
+    origin_y = window_height / 2;
+
     /* Initialize the library */
     if (!glfwInit())
         PEPCB::UI::errorCallback(-1, "glfwInit() Error.");

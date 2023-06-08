@@ -133,18 +133,19 @@ namespace PEPCB
         TVertex rotate(TVertex _v, TAngle _angle);
 
         // Type Geometry
-        class TGeometry
+        class TGeometry // by default, any geometry is a polygon
         {
         public:
             EGeometryType type;
             std::vector<TVertex> outer_vertex_list;
             std::vector<std::vector<TVertex>> inner_vertex_list_list;
+            void log(std::string name);
         };
 
         class TPolygon : public TGeometry
         {
         public:
-                };
+        };
 
         class TLine : public TGeometry
         {
