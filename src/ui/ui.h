@@ -27,6 +27,7 @@ namespace PEPCB
         void scrollCallback(GLFWwindow *window, double xoffset, double yoffset);
 
         GLuint loadLogoTexture(void);
+        void addFootprint(PEPCB::Base::TFootprint footprint);
         void loadUILayers(void);
         void startUI(int _window_width, int _window_height);
     }

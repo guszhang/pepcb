@@ -21,7 +21,7 @@ namespace PEPCB
             GLuint* index_buffer_data;
             LayersRenderer();
             ~LayersRenderer();
-            void addPolygon(PEPCB::Base::TPolygon polygon, PEPCB::Base::ELayer layer);
+            void addGeometry(PEPCB::Base::TGeometry polygon, PEPCB::Base::ELayer layer);
             void updateBuffer();
         private:
         };

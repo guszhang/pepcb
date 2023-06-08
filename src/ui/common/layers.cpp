@@ -78,7 +78,7 @@ LayersRenderer::~LayersRenderer()
     }
 }
 
-void LayersRenderer::addPolygon(TPolygon polygon, ELayer layer)
+void LayersRenderer::addGeometry(TGeometry polygon, ELayer layer)
 {
     std::vector<std::vector<TVertex>> buf_polygon;
     buf_polygon.push_back(polygon.outer_vertex_list);

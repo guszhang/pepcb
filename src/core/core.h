@@ -137,14 +137,14 @@ namespace PEPCB
         {
         public:
             EGeometryType type;
+            std::vector<TVertex> outer_vertex_list;
+            std::vector<std::vector<TVertex>> inner_vertex_list_list;
         };
 
         class TPolygon : public TGeometry
         {
         public:
-            std::vector<TVertex> outer_vertex_list;
-            std::vector<std::vector<TVertex>> inner_vertex_list_list;
-        };
+                };
 
         class TLine : public TGeometry
         {

@@ -2,7 +2,7 @@
 
 using namespace PEPCB::Base;
 
-static double scale_ratio = 10;
+static double scale_ratio = 1;
 static double scale_factor = sqrt(sqrt(2));
 static int window_width = 1600;
 static int window_height = 900;
@@ -115,26 +115,38 @@ void PEPCB::UI::scrollCallback(GLFWwindow *window, double xoffset, double yoffse
     }
 }
 
+void PEPCB::UI::addFootprint(PEPCB::Base::TFootprint footprint)
+{
+    for (auto it_layer = footprint.layer_list.begin(); it_layer != footprint.layer_list.end(); it_layer++)
+    {
+        for (auto it_element = it_layer->second.begin(); it_element < it_layer->second.end(); it_element++)
+        {
+
+            LR.addGeometry(*it_element, it_layer->first);
+        }
+    }
+}
+
 void PEPCB::UI::loadUILayers(void)
 {
-    TPolygon p1;
-    p1.outer_vertex_list.push_back({10, 20});
-    p1.outer_vertex_list.push_back({10, 30});
-    p1.outer_vertex_list.push_back({20, 30});
-    p1.outer_vertex_list.push_back({20, 20});
-    p1.inner_vertex_list_list.push_back({});
-    p1.inner_vertex_list_list[0].push_back({12, 26});
-    p1.inner_vertex_list_list[0].push_back({16, 26});
-    p1.inner_vertex_list_list[0].push_back({16, 22});
-    p1.inner_vertex_list_list[0].push_back({12, 22});
-    TPolygon p2;
-    p2.outer_vertex_list.push_back({0, 24});
-    p2.outer_vertex_list.push_back({40, 24});
-    p2.outer_vertex_list.push_back({40, 25});
-    p2.outer_vertex_list.push_back({0, 25});
+    // TPolygon p1;
+    // p1.outer_vertex_list.push_back({10, 20});
+    // p1.outer_vertex_list.push_back({10, 30});
+    // p1.outer_vertex_list.push_back({20, 30});
+    // p1.outer_vertex_list.push_back({20, 20});
+    // p1.inner_vertex_list_list.push_back({});
+    // p1.inner_vertex_list_list[0].push_back({12, 26});
+    // p1.inner_vertex_list_list[0].push_back({16, 26});
+    // p1.inner_vertex_list_list[0].push_back({16, 22});
+    // p1.inner_vertex_list_list[0].push_back({12, 22});
+    // TPolygon p2;
+    // p2.outer_vertex_list.push_back({0, 24});
+    // p2.outer_vertex_list.push_back({40, 24});
+    // p2.outer_vertex_list.push_back({40, 25});
+    // p2.outer_vertex_list.push_back({0, 25});
 
-    LR.addPolygon(p1, ELayer::F_CU);
-    LR.addPolygon(p2, ELayer::B_CU);
+    // LR.addPolygon(p1, ELayer::F_CU);
+    // LR.addPolygon(p2, ELayer::B_CU);
     LR.updateBuffer();
 }
 
