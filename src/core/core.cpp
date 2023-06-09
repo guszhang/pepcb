@@ -38,12 +38,14 @@ void PEPCB::Base::TFootprint::insertGeometry(ELayer _layer, TGeometry _geometry)
 
 PEPCB::Base::TVertex PEPCB::Base::rotate(PEPCB::Base::TVertex _v, PEPCB::Base::TAngle _angle)
 {
-    double angle = _angle / 1800 * M_PI;
+    double angle = _angle / 1800.0 * M_PI;
+    std::cout << "Angle of pad: " << angle << std::endl;
+
     double cos_a = cos(angle);
     double sin_a = sin(angle);
     PEPCB::Base::TVertex new_v;
     new_v.X = (PEPCB::Base::TDim)(_v.X * cos_a) - (PEPCB::Base::TDim)(_v.Y * sin_a);
-    new_v.Y = (PEPCB::Base::TDim)(_v.X * sin_a) - (PEPCB::Base::TDim)(_v.Y * cos_a);
+    new_v.Y = (PEPCB::Base::TDim)(_v.X * sin_a) + (PEPCB::Base::TDim)(_v.Y * cos_a);
     return new_v;
 }
 

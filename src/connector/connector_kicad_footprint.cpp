@@ -65,12 +65,12 @@ PEPCB::Base::TFootprint KicadFootprintLoader::fetchFootprint(std::string _librar
                 if (it_a->value == "start")
                 {
                     line.a.X = it_a->children[1].getValueDim();
-                    line.a.Y = it_a->children[2].getValueDim();
+                    line.a.Y = -it_a->children[2].getValueDim();
                 }
                 else if (it_a->value == "end")
                 {
                     line.b.X = it_a->children[1].getValueDim();
-                    line.b.Y = it_a->children[2].getValueDim();
+                    line.b.Y = -it_a->children[2].getValueDim();
                 }
                 else
                     // since KiCAD 7
@@ -109,10 +109,11 @@ PEPCB::Base::TFootprint KicadFootprintLoader::fetchFootprint(std::string _librar
                         if (it_a->value == "at")
                         {
                             centre.X = it_a->children[1].getValueDim();
-                            centre.Y = it_a->children[2].getValueDim();
+                            centre.Y = -it_a->children[2].getValueDim();
                             if (it_a->children.size() > 3)
                             {
                                 angle = it_a->children[3].getValueAngle();
+                                std::cout << "Angle of pad: " << angle << std::endl;
                             }
                         }
                         else if (it_a->value == "size")

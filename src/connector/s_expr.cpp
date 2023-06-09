@@ -1,6 +1,7 @@
 #include "s_expr.h"
 
 #include <cstdio>
+#include <iostream>
 
 const char *ANSI_RESET = "\x1b[24m";
 const char *ANSI_HIGHLIGHT = "\x1b[4m";
@@ -155,6 +156,7 @@ PEPCB::Base::TDim SENode::getValueDim()
 
 PEPCB::Base::TAngle SENode::getValueAngle()
 {
+    std::cout << "GetAngle: " << this->getValueDim() << std::endl;
     PEPCB::Base::TAngle angle = this->getValueDim() / 100000;
     return angle;
 }
