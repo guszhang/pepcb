@@ -38,7 +38,7 @@ namespace mapbox
 LayersRenderer::LayersRenderer()
 {
     this->layer_color_map = {
-        {F_COURTYARD, {255, 255, 255}},
+        {F_COURTYARD, {255, 0, 255}},
         {F_CU, {231, 76, 60}},
         {F_SILKSCREEN, {242, 243, 244}},
         {B_CU, {52, 152, 219}},

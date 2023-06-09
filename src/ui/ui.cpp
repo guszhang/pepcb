@@ -2,7 +2,7 @@
 
 using namespace PEPCB::Base;
 
-static double scale_ratio = 1e-4;
+static double scale_ratio = 1e-5;
 static double scale_factor = sqrt(sqrt(2));
 static int window_width;  // = 1600;
 static int window_height; // = 900;
@@ -145,14 +145,14 @@ void PEPCB::UI::loadUILayers(void)
     // p2.outer_vertex_list.push_back({40, 25});
     // p2.outer_vertex_list.push_back({0, 25});
 
-    TPolygon p2;
-    p2.outer_vertex_list.push_back({1000000, 1000000});
-    p2.outer_vertex_list.push_back({1000000, -1000000});
-    p2.outer_vertex_list.push_back({-1000000, -1000000});
-    p2.outer_vertex_list.push_back({-1000000, 1000000});
+    // TGeometry p2;
+    // p2.outer_vertex_list.push_back({1000000, 1000000});
+    // p2.outer_vertex_list.push_back({1000000, -1000000});
+    // p2.outer_vertex_list.push_back({-1000000, -1000000});
+    // p2.outer_vertex_list.push_back({-1000000, 1000000});
 
     // LR.addPolygon(p1, ELayer::F_CU);
-    LR.addGeometry(p2, ELayer::B_CU);
+    // LR.addGeometry(p2, ELayer::B_CU);
 
     LR.updateBuffer();
 }

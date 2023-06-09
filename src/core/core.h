@@ -8,6 +8,8 @@
 #include <map>
 #include <string>
 
+#define CIRCLE_EDGES 32
+
 namespace PEPCB
 {
     namespace Base
@@ -130,28 +132,31 @@ namespace PEPCB
             TDim Y;
         } TVertex; // Vertex positions are stored in integers, with resolution of 1 nm.
 
-        TVertex rotate(TVertex _v, TAngle _angle);
+        TVertex rotate(TVertex _v, double _angle);
 
-        // Type Geometry
-        class TGeometry // by default, any geometry is a polygon
+        // Types of geometries
+        class TGeometry // by default, any geometry is a polygon (with holes)
         {
         public:
-            EGeometryType type;
             std::vector<TVertex> outer_vertex_list;
             std::vector<std::vector<TVertex>> inner_vertex_list_list;
             void log(std::string name);
         };
 
-        class TPolygon : public TGeometry
-        {
+        class TRect : public TGeometry {
         public:
+            TRect(TVertex _centre, TDim _sizeX, TDim _sizeY, TAngle _angle);
+        };
+
+        class TRectRound : public TGeometry {
+            public:
+            TRectRound(TVertex _centre, TDim _sizeX, TDim _sizeY, TAngle _angle, double _round_ratio);
         };
 
         class TLine : public TGeometry
         {
         public:
-            TVertex a, b;
-            TDim width;
+            TLine(TVertex _a, TVertex _b, TDim _width);
         };
 
         class TLineStrip : public TGeometry
@@ -202,7 +207,7 @@ namespace PEPCB
         class TCopper
         {
         public:
-            std::map<ELayer, std::vector<TPolygon>> polygon_list;
+            std::map<ELayer, std::vector<TGeometry>> polygon_list;
             std::vector<TVia> via_list;
 
             TDim clearance;
@@ -211,7 +216,7 @@ namespace PEPCB
 
             bool isValid;
             void validate(void);
-            void addPolygon(ELayer _layer, TPolygon _polygon);
+            void addGeometry(ELayer _layer, TGeometry _polygon);
         };
 
         class TFootprint
@@ -238,7 +243,7 @@ namespace PEPCB
         {
         public:
             std::map<std::string, TComponent> component_list; // a list of components that has been placed down
-            std::vector<TPolygon> top_courtyard_list, bottom_courtyard_list;
+            std::vector<TGeometry> top_courtyard_list, bottom_courtyard_list;
             std::vector<TCopper> copper_list;
 
             bool isValid;

@@ -156,9 +156,14 @@ PEPCB::Base::TDim SENode::getValueDim()
 
 PEPCB::Base::TAngle SENode::getValueAngle()
 {
-    std::cout << "GetAngle: " << this->getValueDim() << std::endl;
+    // std::cout << "GetAngle: " << this->getValueDim() << std::endl;
     PEPCB::Base::TAngle angle = this->getValueDim() / 100000;
     return angle;
+}
+
+double SENode::getValueDouble()
+{
+    return std::stod(this->getValueStr());
 }
 
 PEPCB::Base::ELayer SENode::getValueELayer()
