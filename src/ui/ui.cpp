@@ -129,21 +129,21 @@ void PEPCB::UI::addFootprint(PEPCB::Base::TFootprint footprint)
 
 void PEPCB::UI::loadUILayers(void)
 {
-    // TPolygon p1;
-    // p1.outer_vertex_list.push_back({10, 20});
-    // p1.outer_vertex_list.push_back({10, 30});
-    // p1.outer_vertex_list.push_back({20, 30});
-    // p1.outer_vertex_list.push_back({20, 20});
+    // TGeometry p1;
+    // p1.outer_vertex_list.push_back({1000000, 2000000});
+    // p1.outer_vertex_list.push_back({1000000, 3000000});
+    // p1.outer_vertex_list.push_back({2000000, 3000000});
+    // p1.outer_vertex_list.push_back({2000000, 2000000});
     // p1.inner_vertex_list_list.push_back({});
-    // p1.inner_vertex_list_list[0].push_back({12, 26});
-    // p1.inner_vertex_list_list[0].push_back({16, 26});
-    // p1.inner_vertex_list_list[0].push_back({16, 22});
-    // p1.inner_vertex_list_list[0].push_back({12, 22});
-    // TPolygon p2;
-    // p2.outer_vertex_list.push_back({0, 24});
-    // p2.outer_vertex_list.push_back({40, 24});
-    // p2.outer_vertex_list.push_back({40, 25});
-    // p2.outer_vertex_list.push_back({0, 25});
+    // p1.inner_vertex_list_list[0].push_back({1200000, 2600000});
+    // p1.inner_vertex_list_list[0].push_back({1600000, 2600000});
+    // p1.inner_vertex_list_list[0].push_back({1600000, 2200000});
+    // p1.inner_vertex_list_list[0].push_back({1200000, 2200000});
+    // TGeometry p2;
+    // p2.outer_vertex_list.push_back({0, 2400000});
+    // p2.outer_vertex_list.push_back({4000000, 2400000});
+    // p2.outer_vertex_list.push_back({4000000, 2500000});
+    // p2.outer_vertex_list.push_back({0, 2500000});
 
     // TGeometry p2;
     // p2.outer_vertex_list.push_back({1000000, 1000000});
@@ -151,7 +151,7 @@ void PEPCB::UI::loadUILayers(void)
     // p2.outer_vertex_list.push_back({-1000000, -1000000});
     // p2.outer_vertex_list.push_back({-1000000, 1000000});
 
-    // LR.addPolygon(p1, ELayer::F_CU);
+    // LR.addGeometry(p1, ELayer::F_CU);
     // LR.addGeometry(p2, ELayer::B_CU);
 
     LR.updateBuffer();

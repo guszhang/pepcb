@@ -6,10 +6,17 @@ using namespace PEPCB::Connector;
 KicadFootprintLoader::KicadFootprintLoader(std::string _kicad_footprint_directory)
 {
     this->kicad_footprint_directory = _kicad_footprint_directory;
+    this->enabled_copper_layers.push_back(PEPCB::Base::F_CU);
+    this->enabled_copper_layers.push_back(PEPCB::Base::B_CU);
 }
 
 KicadFootprintLoader::~KicadFootprintLoader()
 {
+}
+
+void KicadFootprintLoader::enableCopperLayer(PEPCB::Base::ELayer layer)
+{
+    this->enabled_copper_layers.push_back(layer);
 }
 
 PEPCB::Base::TFootprint KicadFootprintLoader::fetchFootprint(std::string _library_directory, std::string _footprint_name)
@@ -145,6 +152,8 @@ PEPCB::Base::TFootprint KicadFootprintLoader::fetchFootprint(std::string _librar
                     }
                     footprint.pad_list.insert(std::pair<std::string, PEPCB::Base::TCopper>(pad_name, pad_copper));
                 }
+            } else if (it->children[2].value=="thru_hole"){
+                
             }
         }
     }

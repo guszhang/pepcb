@@ -143,13 +143,15 @@ namespace PEPCB
             void log(std::string name);
         };
 
-        class TRect : public TGeometry {
+        class TRect : public TGeometry
+        {
         public:
             TRect(TVertex _centre, TDim _sizeX, TDim _sizeY, TAngle _angle);
         };
 
-        class TRectRound : public TGeometry {
-            public:
+        class TRectRound : public TGeometry
+        {
+        public:
             TRectRound(TVertex _centre, TDim _sizeX, TDim _sizeY, TAngle _angle, double _round_ratio);
         };
 
@@ -195,6 +197,13 @@ namespace PEPCB
             TAngle angle_start, angle_end;
         };
 
+        class TDrill
+        {
+        public:
+            TVertex centre;
+            TDim drill_diameter;
+        };
+
         class TVia
         {
         public:
@@ -225,6 +234,7 @@ namespace PEPCB
             std::string name;
             std::map<ELayer, std::vector<TGeometry>> layer_list;
             std::vector<TVia> via_list;
+            std::vector<TDrill> drill_list;
             std::map<std::string, TCopper> pad_list;
             void insertGeometry(ELayer _layer, TGeometry _geometry);
         };

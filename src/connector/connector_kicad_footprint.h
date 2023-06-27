@@ -18,6 +18,8 @@ namespace PEPCB
             KicadFootprintLoader(std::string _kicad_footprint_directory);
             ~KicadFootprintLoader();
 
+            std::vector<PEPCB::Base::ELayer> enabled_copper_layers;
+            void enableCopperLayer(PEPCB::Base::ELayer layer);
             PEPCB::Base::TFootprint fetchFootprint(std::string _library_directory, std::string _footprint_name);
 
         private:
